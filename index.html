@@ -492,29 +492,28 @@
             const url = `https://api.callmebot.com/telegram/personal.php?user=${phone}&text=${encodedText}&apikey=${apiKey}`;
 
 
-            fetch(url)
+            // เปิดลิงก์ส่งข้อมูลแบบซ่อน (Invisible Iframe) เพื่อหลบปัญหา CORS
 
-            .then(response => {
+            const iframe = document.createElement('iframe');
 
-                alert('ສົ່ງອໍເດີ້ສຳເລັດ! ທາງຮ້ານได้รับข้อมูลแล้ว');
+            iframe.style.display = 'none';
+
+            iframe.src = url;
+
+            document.body.appendChild(iframe);
+
+
+            setTimeout(() => {
+
+                document.body.removeChild(iframe);
+
+                alert('ສົ່ງອໍເດີ້ສຳເລັດ! ທາງຮ້ານໄດ້ຮັບຂໍ້ມູນແລ້ວ');
 
                 cart = [];
 
                 updateCartUI();
 
-            })
-
-            .catch(error => {
-
-                console.error('Error:', error);
-
-                alert('ສົ່ງອໍເດີ້ສຳເລັດ');
-
-                cart = [];
-
-                updateCartUI();
-
-            });
+            }, 1000);
 
         }
 
