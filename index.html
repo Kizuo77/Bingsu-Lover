@@ -1,681 +1,505 @@
 <!DOCTYPE html>
-
 <html lang="lo">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Bingsu Lover</title>
-
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-
-    <!-- โหลดไลบรารีสำหรับแปลง HTML เป็นรูปภาพ -->
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
 </head>
-
 <body class="bg-gray-50 font-sans pb-28">
-
     <!-- Header -->
-
     <header class="bg-pink-500 text-white p-3 shadow-md sticky top-0 z-10 flex items-center justify-between">
-
         <div class="flex items-center space-x-3">
-
             <img src="https://lh3.googleusercontent.com/d/1DUy6y4NfvVQ99p1FNEvByRjY_66tGBkB" alt="ໂລໂກ້" class="w-10 h-10 rounded-full object-cover border-white shadow">
-
             <div>
-
                 <h1 class="text-base font-bold leading-tight">Bingsu Lover</h1>
-
                 <p class="text-xs text-pink-100">ໂຕະ: <span id="table-number" class="font-semibold">01</span></p>
-
             </div>
-
         </div>
-
         <button onclick="showBill()" class="text-xs bg-pink-700 hover:bg-pink-800 px-3 py-1.5 rounded-full font-medium shadow transition">
-
-            🧾 ເຊັກບິນ / บันทึกรูป
-
+            🧾 ເຊັກບິນ / ບັນທຶກສະລິບ
         </button>
-
     </header>
 
-
     <!-- Menu List -->
-
     <main id="menu-container" class="p-4 max-w-md mx-auto space-y-6">
-
         <!-- ໂຄດຈະຖືກສ້າງອັດຕະໂນມັດຈາກ JavaScript -->
-
     </main>
 
-
     <!-- Option Modal -->
-
     <div id="optionModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-end justify-center">
-
         <div class="bg-white w-full max-w-md rounded-t-2xl p-5 max-h-[85vh] overflow-y-auto">
-
             <div class="flex justify-between items-center mb-4 border-b pb-2">
-
                 <h2 id="modalTitle" class="font-bold text-lg text-gray-800"></h2>
-
                 <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 font-bold text-xl">&times;</button>
-
             </div>
-
             <div class="space-y-4 text-sm">
-
                 <div>
-
                     <label class="font-bold text-gray-700 block mb-2">ເລືອກທັອບປິ້ງເພີ່ມ</label>
-
                     <div id="topping-list" class="space-y-2"></div>
-
                 </div>
-
             </div>
-
             <div class="mt-6 pt-4 border-t flex items-center justify-between">
-
                 <div>
-
                     <p class="text-xs text-gray-500">ລາຄາລວມ</p>
-
                     <p id="modalPrice" class="font-bold text-lg text-pink-600">0 ₭</p>
-
                 </div>
-
                 <button onclick="addToCartModal()" class="bg-pink-500 text-white px-6 py-2.5 rounded-xl font-bold shadow hover:bg-pink-600">ເພີ່ມໃສ່ກະຕ່າ</button>
-
             </div>
-
         </div>
-
     </div>
-
 
     <!-- Bill Modal -->
-
     <div id="billModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
-
-        <div class="bg-white w-full max-w-sm rounded-2xl p-5 max-h-[90vh] overflow-y-auto shadow-xl">
-
-            <!-- ส่วนที่จะแปลงเป็นรูปภาพ (เพิ่มลายน้ำโลโก้ตรงกลาง) -->
-
-            <div id="receipt-capture-area" class="bg-white p-2 relative overflow-hidden">
-
-                <!-- โลโก้จางๆ ตรงกลาง -->
-
-                <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-
-                    <img src="https://lh3.googleusercontent.com/d/1DUy6y4NfvVQ99p1FNEvByRjY_66tGBkB" alt="Watermark" class="w-40 h-40 object-cover opacity-10 rounded-full">
-
+        <div class="bg-white w-full max-w-sm rounded-2xl p-5 max-h-[90vh] flex flex-col shadow-xl">
+            <div class="text-gray-800 text-sm space-y-3 font-mono overflow-y-auto flex-1 pr-1" style="max-height: 60vh;">
+                <div class="text-center border-b pb-3">
+                    <h2 class="font-bold text-lg">BINGSU LOVER</h2>
+                    <p class="text-xs text-gray-500">ໃບເກັບເງິນ / Slip</p>
+                    <p class="text-xs mt-1">ໂຕະ: <span id="bill-table" class="font-bold">01</span></p>
+                    <p class="text-xs" id="bill-time">-</p>
                 </div>
-
-
-                <div class="text-gray-800 text-sm space-y-3 font-mono relative z-10">
-
-                    <div class="text-center border-b pb-3">
-
-                        <h2 class="font-bold text-lg">BINGSU LOVER</h2>
-
-                        <p class="text-xs text-gray-500">ໃບເກັບເງິນ / Bill</p>
-
-                        <p class="text-xs mt-1">ໂຕະ: <span id="bill-table" class="font-bold">01</span></p>
-
-                        <p class="text-xs" id="bill-time">-</p>
-
-                    </div>
-
-                    <div id="bill-items" class="space-y-2 border-b pb-3 text-xs">
-
-                        <!-- รายการที่สั่งทั้งหมดในมื้อนี้ -->
-
-                    </div>
-
-                    <div class="flex justify-between font-bold text-base pt-1">
-
-                        <span>ລວມຍອດທັງໝົດ:</span>
-
-                        <span id="bill-total" class="text-pink-600">0 ₭</span>
-
-                    </div>
-
-                    <div class="text-center text-xs text-gray-400 pt-2 border-t">
-
-                        <p>ຂອບໃຈທີ່ໃຊ້ບໍລິການ!</p>
-
-                    </div>
-
+                <div id="bill-items" class="space-y-2 border-b pb-3 text-xs">
+                    <!-- รายการที่สั่งทั้งหมดในมื้อนี้ -->
                 </div>
-
+                <div class="flex justify-between font-bold text-base pt-1">
+                    <span>ລວມຍອດທັງໝົດ:</span>
+                    <span id="bill-total" class="text-pink-600">0 ₭</span>
+                </div>
+                <div class="text-center text-xs text-gray-400 pt-2 border-t">
+                    <p>ຂອບໃຈທີ່ໃຊ້ບໍລິການ!</p>
+                </div>
             </div>
-
             
-
-            <div class="mt-6 space-y-2">
-
-                <button onclick="downloadBillImage()" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-2.5 rounded-xl font-bold shadow text-sm">
-
-                    📸 บันทึกรูปภาพและล้างรายการ
-
+            <div class="mt-4 pt-3 border-t space-y-2 shrink-0">
+                <button onclick="generateBankSlip()" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-2.5 rounded-xl font-bold shadow text-sm">
+                    📸 ບັນທຶກສະລິບ (Save Slip)
                 </button>
-
                 <button onclick="closeBill()" class="w-full bg-gray-800 text-white py-2 rounded-xl font-bold text-xs">
-
-                    ປິດໜ້າต่าง
-
+                    ປິດໜ້າຕ່າງ
                 </button>
-
             </div>
-
         </div>
-
     </div>
-
 
     <!-- Bottom Cart Bar -->
-
     <div id="cartBar" class="fixed bottom-0 left-0 right-0 bg-white border-t p-4 flex justify-between items-center max-w-md mx-auto shadow-lg hidden">
-
         <div>
-
             <p class="text-xs text-gray-500"><span id="cartCount">0</span> ລາຍການໃນກະຕ່າ</p>
-
             <p id="cartTotal" class="font-bold text-lg text-gray-800">0 ₭</p>
-
         </div>
-
         <button id="checkoutBtn" onclick="checkout()" class="bg-pink-500 text-white px-6 py-2.5 rounded-xl font-bold shadow">ຢືນຢັນສັ່ງອາຫານ</button>
-
     </div>
 
-
     <script>
-
         const menuData = [
-
             {
-
                 category: "🍧 ເມນູບິງຊູ (ເລືອກທັອບປິ້ງໄດ້)",
-
                 items: [
-
                     { id: 1, name: "ບິງຊູຊັອກໂກ້ບຣາວນີ້", price: 89000, img: "https://lh3.googleusercontent.com/d/1_8Zyo4aM9PHvznOlm3EyKcIAr4oZeaMJ", hasOption: true },
-
                     { id: 2, name: "ບິງຊູໝາກມ່ວງ", price: 89000, img: "https://lh3.googleusercontent.com/d/1O-gpnZxkyIivrvqYdC2s1kFHo2HIG-Qk", hasOption: true },
-
                     { id: 3, name: "ບິງຊູຊາໄທ", price: 89000, img: "https://lh3.googleusercontent.com/d/1_Yq53PXcHCdv3CboFQYNODLZYk56QZsh", hasOption: true },
-
                     { id: 4, name: "ບິງຊູຂຽວຊັອກຊິບ", price: 89000, img: "https://lh3.googleusercontent.com/d/1Xtw0CzQPcptSKduOOiIh6U5HjQLhMZ-_", hasOption: true },
-
                     { id: 5, name: "ບິງຊູຊັອກໂກ້ບານານາ", price: 89000, img: "https://lh3.googleusercontent.com/d/1pWLPKt43sW65l_yAWyyRHdSTqsa-44CY", hasOption: true },
-
                     { id: 6, name: "ບິງຊູຊາຂຽວ ບຣາວນີ້", price: 89000, img: "https://lh3.googleusercontent.com/d/1B2HS7EbmyaINLoL5UNcCJ9v7N_u6crIY", hasOption: true },
-
                     { id: 7, name: "ບິງຊູບານານ່າພູເຂົາໄຟ", price: 89000, img: "https://lh3.googleusercontent.com/d/1ah81YOGhiyt5go50OLl2Ll9-Drba2DYP", hasOption: true },
-
                     { id: 8, name: "ບິງຊູຄອນເຟັກໂກໂກ້ຄັ້ນ", price: 89000, img: "https://lh3.googleusercontent.com/d/1Yxss5ZOBmUzkcHjHPzLnekmfmFyWqCch", hasOption: true },
-
                     { id: 9, name: "ບິງຊູໝາກໂມ", price: 119000, img: "https://lh3.googleusercontent.com/d/14-UUzC9FYDcxA7zIcpvLBSn0qRs9unMj", hasOption: true },
-
                     { id: 10, name: "ບິງຊູເມລ່ອນ", price: 119000, img: "https://lh3.googleusercontent.com/d/1-2YG1JZ4d87l3jMVs_hmMGLl5OqXbapA", hasOption: true },
-
                     { id: 11, name: "ບິງຊູແຄນຕາລຸບ", price: 119000, img: "https://lh3.googleusercontent.com/d/1cwsGq7hnxNuPAWBLl7XFowVrt-PAw7hp", hasOption: true }
-
                 ]
-
             },
-
             {
-
                 category: "🍟 ເມນູຂອງກິນຫຼິ້ນ",
-
                 items: [
-
                     { id: 101, name: "ເຟນຟາຍ", price: 30000, img: "https://lh3.googleusercontent.com/d/1I-n3U1-g0HgprEACsLX1n1QyaYNH7Md8", hasOption: false },
-
                     { id: 102, name: "ຂາໄກ່ທອດ", price: 30000, img: "https://lh3.googleusercontent.com/d/1NCdiE8AyJC6CDZeS65SLcK-Q-4up4Y8r", hasOption: false },
-
                     { id: 103, name: "ປີກໄກ່ທອດ", price: 30000, img: "https://lh3.googleusercontent.com/d/1Jd5OeMOYwQCbd82ue3_iwGrzKBajW_BD", hasOption: false },
-
                     { id: 104, name: "ລູກຊີ້ນຮ໋ອດດັອກທອດ", price: 35000, img: "https://lh3.googleusercontent.com/d/1OvXbp8A4iOkFPqPH5xpsl-3rzZe9XQrG", hasOption: false }
-
                 ]
-
             },
-
             {
-
                 category: "🧋 ເມນູນ້ຳ",
-
                 items: [
-
                     { id: 201, name: "ນ້ໍາດື່ມ", price: 5000, img: "https://lh3.googleusercontent.com/d/1BMcR1eu786RwuwU2tWlGXuL6fu3LBKZw", hasOption: false },
-
                     { id: 202, name: "ໂກໂກ້", price: 29000, img: "https://lh3.googleusercontent.com/d/17FnDviArIALaHK05MYFPAQG2YeUVeaOl", hasOption: false },
-
                     { id: 203, name: "ຊາໄທ", price: 29000, img: "https://lh3.googleusercontent.com/d/1TnCO03twPtffmjV6kfb4NQtIZSLV68Eo", hasOption: false },
-
                     { id: 204, name: "ຊາຂຽວ", price: 29000, img: "https://lh3.googleusercontent.com/d/1_taSrZzof01KP3f647Wci9J7zJLrm8QJ", hasOption: false },
-
                     { id: 205, name: "ນົມສົດ", price: 29000, img: "https://lh3.googleusercontent.com/d/1dTMrBsfYyaJyHr2UknpgSTBsgbOzsgHq", hasOption: false },
-
                     { id: 206, name: "ແປັບຊີ້", price: 15000, img: "https://lh3.googleusercontent.com/d/1P6_6P2rSD900hom2ZdmLgYB-s8Ay9FwA", hasOption: false }
-
                 ]
-
             }
-
         ];
-
 
         const toppingsData = [
-
             { name: "ຊອດຊັອກໂກແລັດ", price: 5000 },
-
             { name: "ນົມຂົ້ນຫວານ", price: 5000 },
-
             { name: "ຊອດຊາໄທ", price: 5000 },
-
             { name: "ຊອດຊາຂຽວ", price: 5000 },
-
             { name: "ຄອນເຟຼກ", price: 7000 },
-
             { name: "ໂກໂກ້ຄຣັ້ນ", price: 7000 },
-
             { name: "ຂະໜົມປັງກິ່ງ", price: 7000 },
-
             { name: "ຂະໜົມປັງ", price: 7000 },
-
             { name: "ເມັດບຸກ", price: 7000 },
-
             { name: "ບຣາວນີ້", price: 10000 },
-
             { name: "ວິປຄຣີມ", price: 10000 }
-
         ];
 
-
         let cart = [];
-
         const urlParams = new URLSearchParams(window.location.search);
-
         const tableNumber = urlParams.get('table') || '01';
-
         let currentItem = null;
 
-
         let myOrderHistory = JSON.parse(localStorage.getItem('my_orders_' + tableNumber)) || [];
-
-
         document.getElementById('table-number').innerText = tableNumber;
 
-
         function renderMenu() {
-
             const container = document.getElementById('menu-container');
-
             container.innerHTML = '';
-
             menuData.forEach(group => {
-
                 let groupHTML = `<div class="space-y-3"><h2 class="font-bold text-gray-700 border-b pb-1 text-base">${group.category}</h2>`;
-
                 group.items.forEach(item => {
-
                     groupHTML += `
-
                         <div class="bg-white p-3 rounded-xl shadow-sm flex items-center space-x-4">
-
                             <img src="${item.img}" alt="${item.name}" class="w-20 h-20 min-w-[5rem] object-cover rounded-xl shadow-sm">
-
                             <div class="flex-1">
-
                                 <h3 class="font-bold text-gray-800 text-sm">${item.name}</h3>
-
                                 <p class="text-pink-600 font-bold mt-1">${item.price.toLocaleString()} ₭</p>
-
                             </div>
-
                             <button onclick="handleItemClick(${item.id})" class="${item.hasOption ? 'bg-pink-100 text-pink-600 hover:bg-pink-200' : 'bg-pink-500 text-white hover:bg-pink-600'} px-4 py-2 rounded-lg font-bold text-sm">
-
                                 ${item.hasOption ? 'ເລືອກ' : 'ສັ່ງ'}
-
                             </button>
-
                         </div>
-
                     `;
-
                 });
-
                 groupHTML += `</div>`;
-
                 container.innerHTML += groupHTML;
-
             });
-
         }
-
 
         function handleItemClick(id) {
-
             let foundItem = null;
-
             menuData.forEach(g => {
-
                 let match = g.items.find(i => i.id === id);
-
                 if (match) foundItem = match;
-
             });
-
             if (!foundItem) return;
-
             if (foundItem.hasOption) {
-
                 openModal(foundItem);
-
             } else {
-
                 addToCartDirect(foundItem.name, foundItem.price);
-
             }
-
         }
-
 
         function openModal(item) {
-
             currentItem = item;
-
             document.getElementById('modalTitle').innerText = item.name;
-
             const toppingContainer = document.getElementById('topping-list');
-
             toppingContainer.innerHTML = '';
-
             toppingsData.forEach((top) => {
-
                 toppingContainer.innerHTML += `
-
                     <label class="flex items-center justify-between border p-2 rounded-lg cursor-pointer">
-
                         <span>${top.name} (+${top.price.toLocaleString()} ₭)</span>
-
                         <input type="checkbox" value="${top.name}" data-price="${top.price}" class="topping-checkbox accent-pink-500 w-4 h-4" onchange="updateModalPrice()">
-
                     </label>
-
                 `;
-
             });
-
             updateModalPrice();
-
             document.getElementById('optionModal').classList.remove('hidden');
-
         }
-
 
         function updateModalPrice() {
-
             let total = currentItem.price;
-
             document.querySelectorAll('.topping-checkbox:checked').forEach(el => {
-
                 total += parseInt(el.getAttribute('data-price')) || 0;
-
             });
-
             document.getElementById('modalPrice').innerText = total.toLocaleString() + ' ₭';
-
             currentItem.currentPrice = total;
-
         }
-
 
         function closeModal() {
-
             document.getElementById('optionModal').classList.add('hidden');
-
         }
-
 
         function addToCartModal() {
-
             const toppings = Array.from(document.querySelectorAll('.topping-checkbox:checked')).map(el => ({
-
                 name: el.value,
-
                 price: parseInt(el.getAttribute('data-price'))
-
             }));
-
             cart.push({
-
                 name: currentItem.name,
-
                 price: currentItem.currentPrice,
-
                 toppings: toppings
-
             });
-
             updateCartUI();
-
             closeModal();
-
         }
-
 
         function addToCartDirect(name, price) {
-
             cart.push({ name: name, price: price, toppings: [] });
-
             updateCartUI();
-
         }
-
 
         function updateCartUI() {
-
             const cartBar = document.getElementById('cartBar');
-
             const cartCount = document.getElementById('cartCount');
-
             const cartTotal = document.getElementById('cartTotal');
-
             if (cart.length > 0) {
-
                 cartBar.classList.remove('hidden');
-
                 cartCount.innerText = cart.length;
-
                 let total = cart.reduce((sum, item) => sum + item.price, 0);
-
                 cartTotal.innerText = total.toLocaleString() + ' ₭';
-
             } else {
-
                 cartBar.classList.add('hidden');
-
             }
-
         }
 
+        // ฟังก์ชันจัดกลุ่มรายการที่เหมือนกัน (รวมจำนวนและราคา)
+        function getGroupedOrders(orders) {
+            let map = {};
+            orders.forEach(item => {
+                let toppingsKey = item.toppings ? item.toppings.map(t => t.name).sort().join(',') : '';
+                let key = item.name + '|' + item.price + '|' + toppingsKey;
+                if (map[key]) {
+                    map[key].qty += 1;
+                } else {
+                    map[key] = {
+                        name: item.name,
+                        price: item.price,
+                        toppings: item.toppings,
+                        qty: 1
+                    };
+                }
+            });
+            return Object.values(map);
+        }
 
         function showBill() {
-
             document.getElementById('bill-table').innerText = tableNumber;
-
             document.getElementById('bill-time').innerText = new Date().toLocaleString();
 
-
             const itemsContainer = document.getElementById('bill-items');
-
             itemsContainer.innerHTML = '';
 
-
             if (myOrderHistory.length === 0) {
-
                 itemsContainer.innerHTML = `<p class="text-center text-gray-400 py-4">ຍັງບໍ່ມີລາຍການສັ່ງອາຫານ</p>`;
-
                 document.getElementById('bill-total').innerText = '0 ₭';
-
             } else {
-
+                let grouped = getGroupedOrders(myOrderHistory);
                 let grandTotal = 0;
-
-                myOrderHistory.forEach((item, index) => {
-
-                    let html = `<div class="flex justify-between"><span>${index + 1}. ${item.name}</span><span>${item.price.toLocaleString()} ₭</span></div>`;
-
+                grouped.forEach((item, index) => {
+                    let totalItemPrice = item.price * item.qty;
+                    let html = `<div class="flex justify-between"><span>${index + 1}. ${item.name} ${item.qty > 1 ? '<span class="text-pink-600 font-bold">x' + item.qty + '</span>' : ''}</span><span>${totalItemPrice.toLocaleString()} ₭</span></div>`;
                     if (item.toppings && item.toppings.length > 0) {
-
                         html += `<div class="text-gray-500 pl-3 text-[10px]">+ ${item.toppings.map(t => t.name).join(', ')}</div>`;
-
                     }
-
                     itemsContainer.innerHTML += html;
-
-                    grandTotal += item.price;
-
+                    grandTotal += totalItemPrice;
                 });
-
                 document.getElementById('bill-total').innerText = grandTotal.toLocaleString() + ' ₭';
-
             }
-
             document.getElementById('billModal').classList.remove('hidden');
-
         }
-
 
         function closeBill() {
-
             document.getElementById('billModal').classList.add('hidden');
-
         }
 
-
-        function downloadBillImage() {
-
+        // ฟังก์ชันวาดสลิปคำนวณความสูงพอดีเป๊ะตามจำนวนรายการจริง
+        function generateBankSlip() {
             if (myOrderHistory.length === 0) {
-
                 alert('ຍັງບໍ່ມີລາຍການໃນບິນ!');
-
                 return;
-
             }
 
-            const captureElement = document.getElementById('receipt-capture-area');
-
-            html2canvas(captureElement, { scale: 2, useCORS: true }).then(canvas => {
-
-                const link = document.createElement('a');
-
-                link.download = `Bill-Table-${tableNumber}.png`;
-
-                link.href = canvas.toDataURL('image/png');
-
-                link.click();
-
-
-                localStorage.removeItem('my_orders_' + tableNumber);
-
-                myOrderHistory = [];
-
-                showBill();
-
-                alert('ບັນທຶກຮູບ ແລະ ລ້າງລາຍການສຳເລັດ!');
-
+            let grouped = getGroupedOrders(myOrderHistory);
+            
+            // คำนวณความสูง canvas ตามรายการและท็อปปิ้งแบบไดนามิก
+            let dynamicItemsHeight = 0;
+            grouped.forEach(item => {
+                dynamicItemsHeight += 30; // บรรทัดชื่อเมนู
+                if (item.toppings && item.toppings.length > 0) {
+                    dynamicItemsHeight += 22; // บรรทัดท็อปปิ้ง
+                }
+                dynamicItemsHeight += 8; // ช่องว่างระหว่างรายการ
             });
 
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = 600;
+            canvas.height = 280 + dynamicItemsHeight + 120; // 280 (ส่วนหัว) + รายการ + 120 (ส่วนท้ายยอดรวม)
+
+            function drawRoundedRect(x, y, width, height, radius) {
+                ctx.beginPath();
+                ctx.moveTo(x + radius, y);
+                ctx.lineTo(x + width - radius, y);
+                ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+                ctx.lineTo(x + width, y + height - radius);
+                ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+                ctx.lineTo(x + radius, y + height);
+                ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+                ctx.lineTo(x, y + radius);
+                ctx.quadraticCurveTo(x, y, x + radius, y);
+                ctx.closePath();
+            }
+
+            ctx.save();
+            drawRoundedRect(0, 0, canvas.width, canvas.height, 24);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+            ctx.clip();
+
+            const logoImg = new Image();
+            logoImg.crossOrigin = "anonymous";
+            logoImg.src = "https://lh3.googleusercontent.com/d/1DUy6y4NfvVQ99p1FNEvByRjY_66tGBkB";
+            
+            logoImg.onload = function() {
+                ctx.save();
+                ctx.globalAlpha = 0.06;
+                ctx.drawImage(logoImg, canvas.width / 2 - 150, canvas.height / 2 - 150, 300, 300);
+                ctx.restore();
+
+                drawSlipBody(canvas, ctx, grouped);
+            };
+
+            logoImg.onerror = function() {
+                drawSlipBody(canvas, ctx, grouped);
+            };
         }
 
+        function drawSlipBody(canvas, ctx, grouped) {
+            ctx.fillStyle = '#ec4899';
+            ctx.fillRect(0, 0, canvas.width, 130);
 
-        function checkout() {
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 30px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('BINGSU LOVER', canvas.width / 2, 55);
 
-            if (cart.length === 0) return;
+            ctx.font = '15px sans-serif';
+            ctx.fillText('ໃບເກັບເງິນ / Receipt Slip', canvas.width / 2, 92);
 
+            ctx.fillStyle = '#374151';
+            ctx.font = 'bold 18px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText('ໂຕະ (Table): ' + tableNumber, 40, 175);
 
-            const btn = document.getElementById('checkoutBtn');
+            let nowString = new Date().toLocaleString();
+            ctx.font = '14px sans-serif';
+            ctx.fillStyle = '#6b7280';
+            ctx.fillText('ວັນທີ: ' + nowString, 40, 200);
 
-            const originalText = btn.innerText;
+            ctx.strokeStyle = '#e5e7eb';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(40, 220);
+            ctx.lineTo(560, 220);
+            ctx.stroke();
 
-            btn.innerText = 'ກຳລັງສົ່ງ...';
+            let y = 265;
+            grouped.forEach((item, index) => {
+                ctx.fillStyle = '#1f2937';
+                ctx.font = 'bold 17px sans-serif';
+                ctx.textAlign = 'left';
+                let displayName = `${index + 1}. ${item.name}` + (item.qty > 1 ? ` (x${item.qty})` : '');
+                ctx.fillText(displayName, 40, y);
 
-            btn.disabled = true;
-
-
-            let text = `--- 📋 ອໍເດີ້ ໂຕະ ${tableNumber} ---\n`;
-
-            let roundTotal = 0;
-
-
-            cart.forEach((item, index) => {
-
-                text += `\n${index + 1}. ${item.name} - ${item.price.toLocaleString()} ₭`;
+                ctx.textAlign = 'right';
+                let totalItemPrice = item.price * item.qty;
+                ctx.fillText(`${totalItemPrice.toLocaleString()} ₭`, 560, y);
+                y += 28;
 
                 if (item.toppings && item.toppings.length > 0) {
-
-                    text += `\n   + ທັອບປິ້ງ: ` + item.toppings.map(t => t.name).join(', ');
-
+                    ctx.fillStyle = '#6b7280';
+                    ctx.font = '13px sans-serif';
+                    ctx.textAlign = 'left';
+                    ctx.fillText(`   + ${item.toppings.map(t => t.name).join(', ')}`, 40, y);
+                    y += 22;
                 }
-
-                roundTotal += item.price;
-
+                y += 8;
             });
 
+            ctx.strokeStyle = '#e5e7eb';
+            ctx.beginPath();
+            ctx.moveTo(40, y);
+            ctx.lineTo(560, y);
+            ctx.stroke();
+            y += 35;
+
+            ctx.fillStyle = '#111827';
+            ctx.font = 'bold 20px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText('ລວມຍອດທັງໝົດ (Total):', 40, y);
+
+            ctx.fillStyle = '#ec4899';
+            ctx.font = 'bold 24px sans-serif';
+            ctx.textAlign = 'right';
+            let grandTotalVal = myOrderHistory.reduce((sum, item) => sum + item.price, 0);
+            ctx.fillText(`${grandTotalVal.toLocaleString()} ₭`, 560, y);
+
+            y += 65;
+            ctx.fillStyle = '#9ca3af';
+            ctx.font = '14px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('ຂອບໃຈທີ່ໃຊ້ບໍລິການ Bingsu Lover!', canvas.width / 2, y);
+
+            ctx.restore();
+
+            let safeDateStr = nowString.replace(/[/:]/g, '-');
+            let fileName = `ໃບບິນ Bingsu Lover (ໂຕະ ${tableNumber} - ${safeDateStr}).png`;
+
+            const link = document.createElement('a');
+            link.download = fileName;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+
+            localStorage.removeItem('my_orders_' + tableNumber);
+            myOrderHistory = [];
+            showBill();
+            alert('ບັນທຶກສະລິບສຳເລັດ!');
+        }
+
+        function checkout() {
+            if (cart.length === 0) return;
+
+            const btn = document.getElementById('checkoutBtn');
+            const originalText = btn.innerText;
+            btn.innerText = 'ກຳລັງສົ່ງ...';
+            btn.disabled = true;
+
+            let text = `--- 📋 ອໍເດີ້ ໂຕະ ${tableNumber} ---\n`;
+            let roundTotal = 0;
+
+            cart.forEach((item, index) => {
+                text += `\n${index + 1}. ${item.name} - ${item.price.toLocaleString()} ₭`;
+                if (item.toppings && item.toppings.length > 0) {
+                    text += `\n   + ທັອບປິ້ງ: ` + item.toppings.map(t => t.name).join(', ');
+                }
+                roundTotal += item.price;
+            });
 
             text += `\n\n💰 ລວມອໍເດີ້ຮອບນີ້: ${roundTotal.toLocaleString()} ₭`;
 
-
             const apiKey = "LTU0NjIxODI3ODA"; 
-
             const encodedText = encodeURIComponent(text);
-
             const telegramUrl = `https://api.callmebot.com/telegram/group.php?apikey=${apiKey}&text=${encodedText}`;
-
 
             fetch(telegramUrl, { mode: 'no-cors' }).catch(e => console.error("Telegram Error", e));
 
-
             myOrderHistory = myOrderHistory.concat(cart);
-
             localStorage.setItem('my_orders_' + tableNumber, JSON.stringify(myOrderHistory));
 
-
             setTimeout(() => {
-
                 alert('ສົ່ງອໍເດີ້ສຳເລັດ! ສາມາດສັ່ງເພີ່ມໄດ້ເລື້ອຍໆ');
-
                 cart = [];
-
                 updateCartUI();
-
                 btn.innerText = originalText;
-
                 btn.disabled = false;
-
             }, 1000);
-
         }
 
-
         renderMenu();
-
     </script>
-
 </body>
-
 </html>
