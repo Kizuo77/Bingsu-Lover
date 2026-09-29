@@ -454,7 +454,7 @@
         }
 
 
-             function checkout() {
+        function checkout() {
 
             if (cart.length === 0) return;
 
@@ -492,8 +492,6 @@
             const url = `https://api.callmebot.com/telegram/personal.php?user=${phone}&text=${encodedText}&apikey=${apiKey}`;
 
 
-            // เปิดลิงก์ส่งข้อมูลแบบซ่อน (Invisible Iframe) เพื่อหลบปัญหา CORS
-
             const iframe = document.createElement('iframe');
 
             iframe.style.display = 'none';
@@ -514,34 +512,6 @@
                 updateCartUI();
 
             }, 1000);
-
-        }
-
-            .then(response => {
-
-                if (response.ok) {
-
-                    alert('ສົ່ງອໍເດີ້ສຳເລັດ! ທາງຮ້ານได้รับข้อมูลแล้ว');
-
-                    cart = [];
-
-                    updateCartUI();
-
-                } else {
-
-                    alert('ເກີດຂໍ້ຜິດພາດໃນການສົ່ງອໍເດີ້');
-
-                }
-
-            })
-
-            .catch(error => {
-
-                console.error('Error:', error);
-
-                alert('ບໍ່ສາມາດເຊື່ອມຕໍ່ລະບົບສົ່ງອໍເດີ້ໄດ້');
-
-            });
 
         }
 
