@@ -234,8 +234,12 @@
 
 
         let cart = [];
+let currentItem = null;
 
-        let currentItem = null;
+// ดึงเลขโต๊ะจากลิงก์ เช่น ?table=1
+const urlParams = new URLSearchParams(window.location.search);
+const tableNumber = urlParams.get('table') || '01';
+document.getElementById('table-number').innerText = tableNumber;
 
 
         function renderMenu() {
