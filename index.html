@@ -489,7 +489,9 @@
 
             const encodedText = encodeURIComponent(text);
 
-            const url = `https://api.callmebot.com/telegram/personal.php?user=${phone}&text=${encodedText}&apikey=${apiKey}`;
+            // 💡 เปลี่ยนมาใช้ endpoint text.php ตามระบบของ CallMeBot
+
+            const url = `https://api.callmebot.com/text.php?user=${phone}&text=${encodedText}&apikey=${apiKey}`;
 
 
             const iframe = document.createElement('iframe');
