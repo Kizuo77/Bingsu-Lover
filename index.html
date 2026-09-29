@@ -454,7 +454,7 @@
         }
 
 
-      function checkout() {
+       function checkout() {
 
             if (cart.length === 0) return;
 
@@ -482,15 +482,15 @@
             text += `\n\n💰 ລວມທັງໝົດ: ${total.toLocaleString()} ₭`;
 
 
-            const apiKey = "462182780"; 
+            const apiKey = "LTU0NjIxODI3ODA"; 
 
             const encodedText = encodeURIComponent(text);
 
             
 
-            // ลิงก์ API สำหรับส่งเข้ากลุ่ม Telegram ของ CallMeBot
+            // 💡 ใช้รูปแบบ URL ตามที่ CallMeBot กำหนดสำหรับกลุ่มโดยตรง
 
-            const url = `https://api.callmebot.com/telegram/group.php?apikey=${apiKey}&text=${encodedText}&html=no`;
+            const url = `https://api.callmebot.com/telegram/group.php?apikey=${apiKey}&text=${encodedText}`;
 
 
             const iframe = document.createElement('iframe');
