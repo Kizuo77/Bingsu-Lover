@@ -12,6 +12,20 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
+    <style>
+
+        @media print {
+
+            body * { visibility: hidden; }
+
+            #receipt-print-area, #receipt-print-area * { visibility: visible; }
+
+            #receipt-print-area { position: absolute; left: 0; top: 0; width: 100%; }
+
+        }
+
+    </style>
+
 </head>
 
 <body class="bg-gray-50 font-sans pb-28">
@@ -34,11 +48,11 @@
 
         </div>
 
-        <div class="text-xs bg-pink-600 px-2.5 py-1 rounded-full font-medium shadow-inner">
+        <button onclick="showBill()" class="text-xs bg-pink-700 hover:bg-pink-800 px-3 py-1.5 rounded-full font-medium shadow transition">
 
-            ສະແກນແລ້ວ
+            🧾 ເຊັກບິນທັງໝົດ
 
-        </div>
+        </button>
 
     </header>
 
@@ -66,24 +80,17 @@
 
             </div>
 
-            
-
             <div class="space-y-4 text-sm">
 
                 <div>
 
                     <label class="font-bold text-gray-700 block mb-2">ເລືອກທັອບປິ້ງເພີ່ມ</label>
 
-                    <div id="topping-list" class="space-y-2">
-
-                        <!-- ລາຍການທັອບປິ້ງ -->
-
-                    </div>
+                    <div id="topping-list" class="space-y-2"></div>
 
                 </div>
 
             </div>
-
 
             <div class="mt-6 pt-4 border-t flex items-center justify-between">
 
@@ -104,6 +111,75 @@
     </div>
 
 
+    <!-- Bill Modal -->
+
+    <div id="billModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
+
+        <div class="bg-white w-full max-w-sm rounded-2xl p-5 max-h-[90vh] overflow-y-auto shadow-xl">
+
+            <div id="receipt-print-area" class="text-gray-800 text-sm space-y-3 font-mono">
+
+                <div class="text-center border-b pb-3">
+
+                    <h2 class="font-bold text-lg">BINGSU LOVER</h2>
+
+                    <p class="text-xs text-gray-500">ໃບເກັບເງິນ / Total Bill</p>
+
+                    <p class="text-xs mt-1">ໂຕະ: <span id="bill-table" class="font-bold">01</span></p>
+
+                    <p class="text-xs" id="bill-time">-</p>
+
+                </div>
+
+                <div id="bill-items" class="space-y-2 border-b pb-3 text-xs">
+
+                    <!-- รายการที่สั่งทั้งหมด -->
+
+                </div>
+
+                <div class="flex justify-between font-bold text-base pt-1">
+
+                    <span>ລວມຍອດທີ່ຕ້ອງຈ່າຍ:</span>
+
+                    <span id="bill-total" class="text-pink-600">0 ₭</span>
+
+                </div>
+
+                <div class="text-center text-xs text-gray-400 pt-2 border-t">
+
+                    <p>ຂອບໃຈທີ່ໃຊ້ບໍລິການ!</p>
+
+                </div>
+
+            </div>
+
+            
+
+            <div class="mt-6 space-y-2">
+
+                <div class="flex space-x-2">
+
+                    <button onclick="closeBill()" class="flex-1 bg-gray-200 text-gray-700 py-2.5 rounded-xl font-bold">ປິດ</button>
+
+                    <button onclick="window.print()" class="flex-1 bg-pink-500 text-white py-2.5 rounded-xl font-bold shadow">ພິມບິນ</button>
+
+                </div>
+
+                <!-- ปุ่มสำหรับพนักงาน (ต้องใส่รหัส PIN: 1234) -->
+
+                <button onclick="clearTableSecure()" class="w-full bg-gray-800 hover:bg-gray-900 text-white py-2 rounded-xl font-bold shadow text-xs">
+
+                    🔒 ພະນັກງານເກັບเงินແລ້ວ (เคลียร์โต๊ะ)
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
     <!-- Bottom Cart Bar -->
 
     <div id="cartBar" class="fixed bottom-0 left-0 right-0 bg-white border-t p-4 flex justify-between items-center max-w-md mx-auto shadow-lg hidden">
@@ -116,7 +192,7 @@
 
         </div>
 
-        <button onclick="checkout()" class="bg-pink-500 text-white px-6 py-2 rounded-xl font-bold shadow">ຢືນຢັນສັ່ງອາຫານ</button>
+        <button onclick="checkout()" class="bg-pink-500 text-white px-6 py-2.5 rounded-xl font-bold shadow">ຢືນຢັນສັ່ງອາຫານ</button>
 
     </div>
 
@@ -229,12 +305,16 @@
 
         let cart = [];
 
-        let currentItem = null;
-
-
         const urlParams = new URLSearchParams(window.location.search);
 
         const tableNumber = urlParams.get('table') || '01';
+
+        
+
+        let orderHistory = JSON.parse(localStorage.getItem('order_history_' + tableNumber)) || [];
+
+        let currentItem = null;
+
 
         document.getElementById('table-number').innerText = tableNumber;
 
@@ -245,12 +325,9 @@
 
             container.innerHTML = '';
 
-
             menuData.forEach(group => {
 
                 let groupHTML = `<div class="space-y-3"><h2 class="font-bold text-gray-700 border-b pb-1 text-base">${group.category}</h2>`;
-
-                
 
                 group.items.forEach(item => {
 
@@ -280,7 +357,6 @@
 
                 });
 
-
                 groupHTML += `</div>`;
 
                 container.innerHTML += groupHTML;
@@ -302,9 +378,7 @@
 
             });
 
-
             if (!foundItem) return;
-
 
             if (foundItem.hasOption) {
 
@@ -325,8 +399,6 @@
 
             document.getElementById('modalTitle').innerText = item.name;
 
-            
-
             const toppingContainer = document.getElementById('topping-list');
 
             toppingContainer.innerHTML = '';
@@ -346,7 +418,6 @@
                 `;
 
             });
-
 
             updateModalPrice();
 
@@ -389,8 +460,6 @@
 
             }));
 
-            
-
             cart.push({
 
                 name: currentItem.name,
@@ -401,7 +470,6 @@
 
             });
 
-
             updateCartUI();
 
             closeModal();
@@ -411,15 +479,7 @@
 
         function addToCartDirect(name, price) {
 
-            cart.push({
-
-                name: name,
-
-                price: price,
-
-                toppings: []
-
-            });
+            cart.push({ name: name, price: price, toppings: [] });
 
             updateCartUI();
 
@@ -433,7 +493,6 @@
             const cartCount = document.getElementById('cartCount');
 
             const cartTotal = document.getElementById('cartTotal');
-
 
             if (cart.length > 0) {
 
@@ -454,12 +513,101 @@
         }
 
 
-       function checkout() {
+        function showBill() {
+
+            document.getElementById('bill-table').innerText = tableNumber;
+
+            document.getElementById('bill-time').innerText = new Date().toLocaleString();
+
+
+            const itemsContainer = document.getElementById('bill-items');
+
+            itemsContainer.innerHTML = '';
+
+
+            if (orderHistory.length === 0) {
+
+                itemsContainer.innerHTML = `<p class="text-center text-gray-400 py-4">ຍັງບໍ່ມີລາຍການສັ່ງອາຫານ</p>`;
+
+                document.getElementById('bill-total').innerText = '0 ₭';
+
+            } else {
+
+                let grandTotal = 0;
+
+                orderHistory.forEach((item, index) => {
+
+                    let html = `<div class="flex justify-between"><span>${index + 1}. ${item.name}</span><span>${item.price.toLocaleString()} ₭</span></div>`;
+
+                    if (item.toppings && item.toppings.length > 0) {
+
+                        html += `<div class="text-gray-500 pl-3 text-[10px]">+ ${item.toppings.map(t => t.name).join(', ')}</div>`;
+
+                    }
+
+                    itemsContainer.innerHTML += html;
+
+                    grandTotal += item.price;
+
+                });
+
+                document.getElementById('bill-total').innerText = grandTotal.toLocaleString() + ' ₭';
+
+            }
+
+            document.getElementById('billModal').classList.remove('hidden');
+
+        }
+
+
+        function closeBill() {
+
+            document.getElementById('billModal').classList.add('hidden');
+
+        }
+
+
+        function clearTableSecure() {
+
+            let pin = prompt('ກະລຸນາໃສ່ລະຫັດຜ່ານພະນັກງານ (PIN):');
+
+            if (pin === null) return;
+
+            
+
+            if (pin === '4725') { // รหัสผ่านพนักงาน สามารถเปลี่ยนตรงนี้ได้ครับ
+
+                if (confirm('ยืนยันการชำระเงินและเคลียร์บิลของโต๊ะ ' + tableNumber + ' ใช่หรือไม่?')) {
+
+                    localStorage.removeItem('order_history_' + tableNumber);
+
+                    orderHistory = [];
+
+                    cart = [];
+
+                    updateCartUI();
+
+                    alert('เคลียร์บิลโต๊ะ ' + tableNumber + ' สำเร็จ!');
+
+                    closeBill();
+
+                }
+
+            } else {
+
+                alert('ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ!');
+
+            }
+
+        }
+
+
+        function checkout() {
 
             if (cart.length === 0) return;
 
 
-            let text = `--- 📋 ອໍເດີ້ໃໝ່ ໂຕະ ${tableNumber} ---\n`;
+            let text = `--- 📋 ອໍເດີ້ເພີ່ມ ໂຕະ ${tableNumber} ---\n`;
 
             let total = 0;
 
@@ -479,16 +627,12 @@
             });
 
 
-            text += `\n\n💰 ລວມທັງໝົດ: ${total.toLocaleString()} ₭`;
+            text += `\n\n💰 ລວມອໍເດີ້ຮອບນີ້: ${total.toLocaleString()} ₭`;
 
 
             const apiKey = "LTU0NjIxODI3ODA"; 
 
             const encodedText = encodeURIComponent(text);
-
-            
-
-            // 💡 ใช้รูปแบบ URL ตามที่ CallMeBot กำหนดสำหรับกลุ่มโดยตรง
 
             const url = `https://api.callmebot.com/telegram/group.php?apikey=${apiKey}&text=${encodedText}`;
 
@@ -502,11 +646,16 @@
             document.body.appendChild(iframe);
 
 
+            orderHistory = orderHistory.concat(cart);
+
+            localStorage.setItem('order_history_' + tableNumber, JSON.stringify(orderHistory));
+
+
             setTimeout(() => {
 
                 document.body.removeChild(iframe);
 
-                alert('ສົ່ງອໍເດີ້ສຳເລັດ! ທາງຮ້ານໄດ້ຮັບຂໍ້ມູນແລ້ວ');
+                alert('ສົ່ງອໍເດີ້ສຳເລັດ! ສามารถສັ່ງເພີ່ມໄດ້ເລື້ອຍໆ');
 
                 cart = [];
 
