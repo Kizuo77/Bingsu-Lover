@@ -254,7 +254,6 @@
             }
         }
 
-        // ฟังก์ชันจัดกลุ่มรายการที่เหมือนกัน (รวมจำนวนและราคา)
         function getGroupedOrders(orders) {
             let map = {};
             orders.forEach(item => {
@@ -305,7 +304,7 @@
             document.getElementById('billModal').classList.add('hidden');
         }
 
-        // ฟังก์ชันวาดสลิปคำนวณความสูงพอดีเป๊ะตามจำนวนรายการจริง
+        // ฟังก์ชันวาดสลิปแบบเคลียร์พื้นหลังมุมให้โปร่งใส (ไม่มีสีพื้นหลังส่วนเกิน)
         function generateBankSlip() {
             if (myOrderHistory.length === 0) {
                 alert('ຍັງບໍ່ມີລາຍການໃນບິນ!');
@@ -314,21 +313,23 @@
 
             let grouped = getGroupedOrders(myOrderHistory);
             
-            // คำนวณความสูง canvas ตามรายการและท็อปปิ้งแบบไดนามิก
             let dynamicItemsHeight = 0;
             grouped.forEach(item => {
-                dynamicItemsHeight += 30; // บรรทัดชื่อเมนู
+                dynamicItemsHeight += 30;
                 if (item.toppings && item.toppings.length > 0) {
-                    dynamicItemsHeight += 22; // บรรทัดท็อปปิ้ง
+                    dynamicItemsHeight += 22;
                 }
-                dynamicItemsHeight += 8; // ช่องว่างระหว่างรายการ
+                dynamicItemsHeight += 8;
             });
 
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             
             canvas.width = 600;
-            canvas.height = 280 + dynamicItemsHeight + 120; // 280 (ส่วนหัว) + รายการ + 120 (ส่วนท้ายยอดรวม)
+            canvas.height = 280 + dynamicItemsHeight + 120;
+
+            // ล้างพื้นหลังให้เป็นโปร่งใสทั้งหมดตั้งแต่แรก
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             function drawRoundedRect(x, y, width, height, radius) {
                 ctx.beginPath();
@@ -346,7 +347,7 @@
 
             ctx.save();
             drawRoundedRect(0, 0, canvas.width, canvas.height, 24);
-            ctx.fillStyle = '#ffffff';
+            ctx.fillStyle = '#ffffff'; // ตัวสลิปสีขาวเฉพาะในกรอบโค้ง
             ctx.fill();
             ctx.clip();
 
