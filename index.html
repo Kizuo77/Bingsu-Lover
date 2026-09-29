@@ -123,12 +123,6 @@
 
     <script>
 
-        // ==========================================
-
-        // 📋 ຖານຂໍ້ມູນເມນູ ແລະ ທັອບປິ້ງ (ພາສາລາວ)
-
-        // ==========================================
-
         const menuData = [
 
             {
@@ -234,12 +228,15 @@
 
 
         let cart = [];
-let currentItem = null;
 
-// ดึงเลขโต๊ะจากลิงก์ เช่น ?table=1
-const urlParams = new URLSearchParams(window.location.search);
-const tableNumber = urlParams.get('table') || '01';
-document.getElementById('table-number').innerText = tableNumber;
+        let currentItem = null;
+
+
+        const urlParams = new URLSearchParams(window.location.search);
+
+        const tableNumber = urlParams.get('table') || '01';
+
+        document.getElementById('table-number').innerText = tableNumber;
 
 
         function renderMenu() {
@@ -459,11 +456,41 @@ document.getElementById('table-number').innerText = tableNumber;
 
         function checkout() {
 
-            alert('ສົ່ງອໍເດີ້ສຳເລັດແລ້ວ!');
+            if (cart.length === 0) return;
 
-            cart = [];
 
-            updateCartUI();
+            let text = `--- 📋 ອໍເດີ້ໃໝ່ ໂຕະ ${tableNumber} ---\n`;
+
+            let total = 0;
+
+
+            cart.forEach((item, index) => {
+
+                text += `\n${index + 1}. ${item.name} - ${item.price.toLocaleString()} ₭`;
+
+                if (item.toppings && item.toppings.length > 0) {
+
+                    text += `\n   + ທັອບປິ້ງ: ` + item.toppings.map(t => t.name).join(', ');
+
+                }
+
+                total += item.price;
+
+            });
+
+
+            text += `\n\n💰 ລວມທັງໝົດ: ${total.toLocaleString()} ₭`;
+
+
+            // แทนที่เครื่องหมายดอกจันด้วย Page ID หรือ Username เพจ Facebook ของคุณ
+
+            let pageID = "*************8"; 
+
+            let messengerURL = `https://m.me/${pageID}?text=` + encodeURIComponent(text);
+
+            
+
+            window.open(messengerURL, '_blank');
 
         }
 
