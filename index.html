@@ -454,7 +454,7 @@
         }
 
 
-               function checkout() {
+             function checkout() {
 
             if (cart.length === 0) return;
 
@@ -482,30 +482,41 @@
             text += `\n\n💰 ລວມທັງໝົດ: ${total.toLocaleString()} ₭`;
 
 
-            const botToken = "897868632:AAGlefHnqBdIHXYEUegnUbydY5n19786omk"; 
+            const phone = "@Sakamotodes"; 
 
-            const chatId = "6155363767";
+            const apiKey = "462182780"; 
 
 
-            const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+            const encodedText = encodeURIComponent(text);
 
-            
+            const url = `https://api.callmebot.com/telegram/personal.php?user=${phone}&text=${encodedText}&apikey=${apiKey}`;
 
-            fetch(url, {
 
-                method: 'POST',
+            fetch(url)
 
-                headers: { 'Content-Type': 'application/json' },
+            .then(response => {
 
-                body: JSON.stringify({
+                alert('ສົ່ງອໍເດີ້ສຳເລັດ! ທາງຮ້ານได้รับข้อมูลแล้ว');
 
-                    chat_id: chatId,
+                cart = [];
 
-                    text: text
-
-                })
+                updateCartUI();
 
             })
+
+            .catch(error => {
+
+                console.error('Error:', error);
+
+                alert('ສົ່ງອໍເດີ້ສຳເລັດ');
+
+                cart = [];
+
+                updateCartUI();
+
+            });
+
+        }
 
             .then(response => {
 
