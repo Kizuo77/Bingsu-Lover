@@ -482,16 +482,15 @@
             text += `\n\n💰 ລວມທັງໝົດ: ${total.toLocaleString()} ₭`;
 
 
-            const phone = "@Sakamotodes"; 
-
             const apiKey = "462182780"; 
-
 
             const encodedText = encodeURIComponent(text);
 
-            // 💡 เปลี่ยนมาใช้ endpoint text.php ตามระบบของ CallMeBot
+            
 
-            const url = `https://api.callmebot.com/text.php?user=${phone}&text=${encodedText}&apikey=${apiKey}`;
+            // ลิงก์ API สำหรับส่งเข้ากลุ่ม Telegram ของ CallMeBot
+
+            const url = `https://api.callmebot.com/telegram/group.php?apikey=${apiKey}&text=${encodedText}&html=no`;
 
 
             const iframe = document.createElement('iframe');
@@ -515,7 +514,7 @@
 
             }, 1000);
 
-        }
+             }
 
 
         renderMenu();
