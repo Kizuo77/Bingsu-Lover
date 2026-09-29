@@ -12,6 +12,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
+    <!-- โหลดไลบรารีสำหรับแปลง HTML เป็นรูปภาพ -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 </head>
 
 <body class="bg-gray-50 font-sans pb-28">
@@ -33,6 +37,12 @@
             </div>
 
         </div>
+
+        <button onclick="showBill()" class="text-xs bg-pink-700 hover:bg-pink-800 px-3 py-1.5 rounded-full font-medium shadow transition">
+
+            🧾 ເຊັກບິນ / บันทึกรูป
+
+        </button>
 
     </header>
 
@@ -83,6 +93,86 @@
                 </div>
 
                 <button onclick="addToCartModal()" class="bg-pink-500 text-white px-6 py-2.5 rounded-xl font-bold shadow hover:bg-pink-600">ເພີ່ມໃສ່ກະຕ່າ</button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Bill Modal -->
+
+    <div id="billModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
+
+        <div class="bg-white w-full max-w-sm rounded-2xl p-5 max-h-[90vh] overflow-y-auto shadow-xl">
+
+            <!-- ส่วนที่จะแปลงเป็นรูปภาพ (เพิ่มลายน้ำโลโก้ตรงกลาง) -->
+
+            <div id="receipt-capture-area" class="bg-white p-2 relative overflow-hidden">
+
+                <!-- โลโก้จางๆ ตรงกลาง -->
+
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+
+                    <img src="https://lh3.googleusercontent.com/d/1DUy6y4NfvVQ99p1FNEvByRjY_66tGBkB" alt="Watermark" class="w-40 h-40 object-cover opacity-10 rounded-full">
+
+                </div>
+
+
+                <div class="text-gray-800 text-sm space-y-3 font-mono relative z-10">
+
+                    <div class="text-center border-b pb-3">
+
+                        <h2 class="font-bold text-lg">BINGSU LOVER</h2>
+
+                        <p class="text-xs text-gray-500">ໃບເກັບເງິນ / Bill</p>
+
+                        <p class="text-xs mt-1">ໂຕະ: <span id="bill-table" class="font-bold">01</span></p>
+
+                        <p class="text-xs" id="bill-time">-</p>
+
+                    </div>
+
+                    <div id="bill-items" class="space-y-2 border-b pb-3 text-xs">
+
+                        <!-- รายการที่สั่งทั้งหมดในมื้อนี้ -->
+
+                    </div>
+
+                    <div class="flex justify-between font-bold text-base pt-1">
+
+                        <span>ລວມຍອດທັງໝົດ:</span>
+
+                        <span id="bill-total" class="text-pink-600">0 ₭</span>
+
+                    </div>
+
+                    <div class="text-center text-xs text-gray-400 pt-2 border-t">
+
+                        <p>ຂອບໃຈທີ່ໃຊ້ບໍລິການ!</p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            
+
+            <div class="mt-6 space-y-2">
+
+                <button onclick="downloadBillImage()" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-2.5 rounded-xl font-bold shadow text-sm">
+
+                    📸 บันทึกรูปภาพและล้างรายการ
+
+                </button>
+
+                <button onclick="closeBill()" class="w-full bg-gray-800 text-white py-2 rounded-xl font-bold text-xs">
+
+                    ປິດໜ້າต่าง
+
+                </button>
 
             </div>
 
@@ -221,6 +311,9 @@
         const tableNumber = urlParams.get('table') || '01';
 
         let currentItem = null;
+
+
+        let myOrderHistory = JSON.parse(localStorage.getItem('my_orders_' + tableNumber)) || [];
 
 
         document.getElementById('table-number').innerText = tableNumber;
@@ -420,6 +513,96 @@
         }
 
 
+        function showBill() {
+
+            document.getElementById('bill-table').innerText = tableNumber;
+
+            document.getElementById('bill-time').innerText = new Date().toLocaleString();
+
+
+            const itemsContainer = document.getElementById('bill-items');
+
+            itemsContainer.innerHTML = '';
+
+
+            if (myOrderHistory.length === 0) {
+
+                itemsContainer.innerHTML = `<p class="text-center text-gray-400 py-4">ຍັງບໍ່ມີລາຍການສັ່ງອາຫານ</p>`;
+
+                document.getElementById('bill-total').innerText = '0 ₭';
+
+            } else {
+
+                let grandTotal = 0;
+
+                myOrderHistory.forEach((item, index) => {
+
+                    let html = `<div class="flex justify-between"><span>${index + 1}. ${item.name}</span><span>${item.price.toLocaleString()} ₭</span></div>`;
+
+                    if (item.toppings && item.toppings.length > 0) {
+
+                        html += `<div class="text-gray-500 pl-3 text-[10px]">+ ${item.toppings.map(t => t.name).join(', ')}</div>`;
+
+                    }
+
+                    itemsContainer.innerHTML += html;
+
+                    grandTotal += item.price;
+
+                });
+
+                document.getElementById('bill-total').innerText = grandTotal.toLocaleString() + ' ₭';
+
+            }
+
+            document.getElementById('billModal').classList.remove('hidden');
+
+        }
+
+
+        function closeBill() {
+
+            document.getElementById('billModal').classList.add('hidden');
+
+        }
+
+
+        function downloadBillImage() {
+
+            if (myOrderHistory.length === 0) {
+
+                alert('ຍັງບໍ່ມີລາຍການໃນບິນ!');
+
+                return;
+
+            }
+
+            const captureElement = document.getElementById('receipt-capture-area');
+
+            html2canvas(captureElement, { scale: 2, useCORS: true }).then(canvas => {
+
+                const link = document.createElement('a');
+
+                link.download = `Bill-Table-${tableNumber}.png`;
+
+                link.href = canvas.toDataURL('image/png');
+
+                link.click();
+
+
+                localStorage.removeItem('my_orders_' + tableNumber);
+
+                myOrderHistory = [];
+
+                showBill();
+
+                alert('ບັນທຶກຮູບ ແລະ ລ້າງລາຍການສຳເລັດ!');
+
+            });
+
+        }
+
+
         function checkout() {
 
             if (cart.length === 0) return;
@@ -464,9 +647,12 @@
             const telegramUrl = `https://api.callmebot.com/telegram/group.php?apikey=${apiKey}&text=${encodedText}`;
 
 
-            // ยิง Telegram ผ่าน fetch ทะลุบล็อก
-
             fetch(telegramUrl, { mode: 'no-cors' }).catch(e => console.error("Telegram Error", e));
+
+
+            myOrderHistory = myOrderHistory.concat(cart);
+
+            localStorage.setItem('my_orders_' + tableNumber, JSON.stringify(myOrderHistory));
 
 
             setTimeout(() => {
