@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bingsu Lover</title>
+    <title>Bingsu Lover - ສັ່ງອາຫານ</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 <body class="bg-gray-50 font-sans pb-28">
-    <!-- Header -->
     <header class="bg-pink-500 text-white p-3 shadow-md sticky top-0 z-10 flex items-center justify-between">
         <div class="flex items-center space-x-3">
             <img src="https://lh3.googleusercontent.com/d/1DUy6y4NfvVQ99p1FNEvByRjY_66tGBkB" alt="ໂລໂກ້" class="w-10 h-10 rounded-full object-cover border-white shadow">
@@ -21,10 +20,7 @@
         </button>
     </header>
 
-    <!-- Menu List -->
-    <main id="menu-container" class="p-4 max-w-md mx-auto space-y-6">
-        <!-- ໂຄດຈະຖືກສ້າງອັດຕະໂນມັດຈາກ JavaScript -->
-    </main>
+    <main id="menu-container" class="p-4 max-w-md mx-auto space-y-6"></main>
 
     <!-- Option Modal -->
     <div id="optionModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-end justify-center">
@@ -55,13 +51,11 @@
             <div class="text-gray-800 text-sm space-y-3 font-mono overflow-y-auto flex-1 pr-1" style="max-height: 60vh;">
                 <div class="text-center border-b pb-3">
                     <h2 class="font-bold text-lg">BINGSU LOVER</h2>
-                    <p class="text-xs text-gray-500">ໃບເກັບເງິນ / Slip</p>
+                    <p class="text-xs text-gray-500">ໃບເກັບເງິນ / Receipt Slip</p>
                     <p class="text-xs mt-1">ໂຕະ: <span id="bill-table" class="font-bold">01</span></p>
                     <p class="text-xs" id="bill-time">-</p>
                 </div>
-                <div id="bill-items" class="space-y-2 border-b pb-3 text-xs">
-                    <!-- รายการที่สั่งทั้งหมดในมื้อนี้ -->
-                </div>
+                <div id="bill-items" class="space-y-2 border-b pb-3 text-xs"></div>
                 <div class="flex justify-between font-bold text-base pt-1">
                     <span>ລວມຍອດທັງໝົດ:</span>
                     <span id="bill-total" class="text-pink-600">0 ₭</span>
@@ -82,7 +76,6 @@
         </div>
     </div>
 
-    <!-- Bottom Cart Bar -->
     <div id="cartBar" class="fixed bottom-0 left-0 right-0 bg-white border-t p-4 flex justify-between items-center max-w-md mx-auto shadow-lg hidden">
         <div>
             <p class="text-xs text-gray-500"><span id="cartCount">0</span> ລາຍການໃນກະຕ່າ</p>
@@ -92,6 +85,8 @@
     </div>
 
     <script>
+        const SHEETDB_URL = "https://sheetdb.io/api/v1/zbrd6vx2a05hl";
+
         const menuData = [
             {
                 category: "🍧 ເມນູບິງຊູ (ເລືອກທັອບປິ້ງໄດ້)",
@@ -146,10 +141,10 @@
         ];
 
         let cart = [];
+        let itemQuantities = {}; // เก็บจำนวนเริ่มต้นของแต่ละเมนู
         const urlParams = new URLSearchParams(window.location.search);
         const tableNumber = urlParams.get('table') || '01';
         let currentItem = null;
-
         let myOrderHistory = JSON.parse(localStorage.getItem('my_orders_' + tableNumber)) || [];
         document.getElementById('table-number').innerText = tableNumber;
 
@@ -159,22 +154,41 @@
             menuData.forEach(group => {
                 let groupHTML = `<div class="space-y-3"><h2 class="font-bold text-gray-700 border-b pb-1 text-base">${group.category}</h2>`;
                 group.items.forEach(item => {
+                    if (itemQuantities[item.id] === undefined) itemQuantities[item.id] = 1;
+                    let qty = itemQuantities[item.id];
+
                     groupHTML += `
-                        <div class="bg-white p-3 rounded-xl shadow-sm flex items-center space-x-4">
+                        <div class="bg-white p-3 rounded-xl shadow-sm flex items-center space-x-3">
                             <img src="${item.img}" alt="${item.name}" class="w-20 h-20 min-w-[5rem] object-cover rounded-xl shadow-sm">
                             <div class="flex-1">
-                                <h3 class="font-bold text-gray-800 text-sm">${item.name}</h3>
-                                <p class="text-pink-600 font-bold mt-1">${item.price.toLocaleString()} ₭</p>
+                                <h3 class="font-bold text-gray-800 text-sm leading-snug">${item.name}</h3>
+                                <p class="text-pink-600 font-bold mt-0.5 text-sm">${item.price.toLocaleString()} ₭</p>
+                                
+                                <!-- Qty & Add UI -->
+                                <div class="flex items-center justify-between mt-2">
+                                    <div class="flex items-center border rounded-lg bg-gray-50 overflow-hidden">
+                                        <button onclick="changeQty(${item.id}, -1)" class="px-2 py-0.5 text-gray-600 hover:bg-gray-200 font-bold text-xs">-</button>
+                                        <span id="qty-${item.id}" class="px-2.5 text-xs font-bold text-gray-800">${qty}</span>
+                                        <button onclick="changeQty(${item.id}, 1)" class="px-2 py-0.5 text-gray-600 hover:bg-gray-200 font-bold text-xs">+</button>
+                                    </div>
+                                    <button onclick="handleItemClick(${item.id})" class="${item.hasOption ? 'bg-pink-100 text-pink-600 hover:bg-pink-200' : 'bg-pink-500 text-white hover:bg-pink-600'} px-3 py-1 rounded-lg font-bold text-xs transition">
+                                        ${item.hasOption ? 'ເລືອກ' : 'ສັ່ງ'}
+                                    </button>
+                                </div>
                             </div>
-                            <button onclick="handleItemClick(${item.id})" class="${item.hasOption ? 'bg-pink-100 text-pink-600 hover:bg-pink-200' : 'bg-pink-500 text-white hover:bg-pink-600'} px-4 py-2 rounded-lg font-bold text-sm">
-                                ${item.hasOption ? 'ເລືອກ' : 'ສັ່ງ'}
-                            </button>
                         </div>
                     `;
                 });
                 groupHTML += `</div>`;
                 container.innerHTML += groupHTML;
             });
+        }
+
+        function changeQty(id, delta) {
+            if (itemQuantities[id] + delta >= 1) {
+                itemQuantities[id] += delta;
+                document.getElementById(`qty-${id}`).innerText = itemQuantities[id];
+            }
         }
 
         function handleItemClick(id) {
@@ -184,16 +198,20 @@
                 if (match) foundItem = match;
             });
             if (!foundItem) return;
+
+            let qty = itemQuantities[id] || 1;
             if (foundItem.hasOption) {
-                openModal(foundItem);
+                openModal(foundItem, qty);
             } else {
-                addToCartDirect(foundItem.name, foundItem.price);
+                addToCartDirect(foundItem.name, foundItem.price, qty);
+                itemQuantities[id] = 1; // รีเซ็ตจำนวนกลับเป็น 1
+                document.getElementById(`qty-${id}`).innerText = 1;
             }
         }
 
-        function openModal(item) {
-            currentItem = item;
-            document.getElementById('modalTitle').innerText = item.name;
+        function openModal(item, qty) {
+            currentItem = { ...item, qty: qty };
+            document.getElementById('modalTitle').innerText = `${item.name} (x${qty})`;
             const toppingContainer = document.getElementById('topping-list');
             toppingContainer.innerHTML = '';
             toppingsData.forEach((top) => {
@@ -209,34 +227,37 @@
         }
 
         function updateModalPrice() {
-            let total = currentItem.price;
+            let toppingTotal = 0;
             document.querySelectorAll('.topping-checkbox:checked').forEach(el => {
-                total += parseInt(el.getAttribute('data-price')) || 0;
+                toppingTotal += parseInt(el.getAttribute('data-price')) || 0;
             });
+            let total = (currentItem.price + toppingTotal) * currentItem.qty;
             document.getElementById('modalPrice').innerText = total.toLocaleString() + ' ₭';
-            currentItem.currentPrice = total;
+            currentItem.currentPricePerUnit = currentItem.price + toppingTotal;
         }
 
-        function closeModal() {
-            document.getElementById('optionModal').classList.add('hidden');
-        }
+        function closeModal() { document.getElementById('optionModal').classList.add('hidden'); }
 
         function addToCartModal() {
             const toppings = Array.from(document.querySelectorAll('.topping-checkbox:checked')).map(el => ({
-                name: el.value,
-                price: parseInt(el.getAttribute('data-price'))
+                name: el.value, price: parseInt(el.getAttribute('data-price'))
             }));
-            cart.push({
-                name: currentItem.name,
-                price: currentItem.currentPrice,
-                toppings: toppings
-            });
+            
+            for (let i = 0; i < currentItem.qty; i++) {
+                cart.push({ name: currentItem.name, price: currentItem.currentPricePerUnit, toppings: toppings });
+            }
+
+            itemQuantities[currentItem.id] = 1;
+            document.getElementById(`qty-${currentItem.id}`).innerText = 1;
+
             updateCartUI();
             closeModal();
         }
 
-        function addToCartDirect(name, price) {
-            cart.push({ name: name, price: price, toppings: [] });
+        function addToCartDirect(name, price, qty) {
+            for (let i = 0; i < qty; i++) {
+                cart.push({ name: name, price: price, toppings: [] });
+            }
             updateCartUI();
         }
 
@@ -249,9 +270,7 @@
                 cartCount.innerText = cart.length;
                 let total = cart.reduce((sum, item) => sum + item.price, 0);
                 cartTotal.innerText = total.toLocaleString() + ' ₭';
-            } else {
-                cartBar.classList.add('hidden');
-            }
+            } else { cartBar.classList.add('hidden'); }
         }
 
         function getGroupedOrders(orders) {
@@ -259,16 +278,8 @@
             orders.forEach(item => {
                 let toppingsKey = item.toppings ? item.toppings.map(t => t.name).sort().join(',') : '';
                 let key = item.name + '|' + item.price + '|' + toppingsKey;
-                if (map[key]) {
-                    map[key].qty += 1;
-                } else {
-                    map[key] = {
-                        name: item.name,
-                        price: item.price,
-                        toppings: item.toppings,
-                        qty: 1
-                    };
-                }
+                if (map[key]) map[key].qty += 1;
+                else map[key] = { name: item.name, price: item.price, toppings: item.toppings, qty: 1 };
             });
             return Object.values(map);
         }
@@ -276,7 +287,6 @@
         function showBill() {
             document.getElementById('bill-table').innerText = tableNumber;
             document.getElementById('bill-time').innerText = new Date().toLocaleString();
-
             const itemsContainer = document.getElementById('bill-items');
             itemsContainer.innerHTML = '';
 
@@ -300,11 +310,8 @@
             document.getElementById('billModal').classList.remove('hidden');
         }
 
-        function closeBill() {
-            document.getElementById('billModal').classList.add('hidden');
-        }
+        function closeBill() { document.getElementById('billModal').classList.add('hidden'); }
 
-        // ฟังก์ชันวาดสลิปแบบเคลียร์พื้นหลังมุมให้โปร่งใส (ไม่มีสีพื้นหลังส่วนเกิน)
         function generateBankSlip() {
             if (myOrderHistory.length === 0) {
                 alert('ຍັງບໍ່ມີລາຍການໃນບິນ!');
@@ -312,23 +319,20 @@
             }
 
             let grouped = getGroupedOrders(myOrderHistory);
-            
+            let grandTotalVal = myOrderHistory.reduce((sum, item) => sum + item.price, 0);
+            const nowString = new Date().toLocaleString();
+
             let dynamicItemsHeight = 0;
             grouped.forEach(item => {
                 dynamicItemsHeight += 30;
-                if (item.toppings && item.toppings.length > 0) {
-                    dynamicItemsHeight += 22;
-                }
+                if (item.toppings && item.toppings.length > 0) dynamicItemsHeight += 22;
                 dynamicItemsHeight += 8;
             });
 
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
-            
             canvas.width = 600;
             canvas.height = 280 + dynamicItemsHeight + 120;
-
-            // ล้างพื้นหลังให้เป็นโปร่งใสทั้งหมดตั้งแต่แรก
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             function drawRoundedRect(x, y, width, height, radius) {
@@ -347,7 +351,7 @@
 
             ctx.save();
             drawRoundedRect(0, 0, canvas.width, canvas.height, 24);
-            ctx.fillStyle = '#ffffff'; // ตัวสลิปสีขาวเฉพาะในกรอบโค้ง
+            ctx.fillStyle = '#ffffff';
             ctx.fill();
             ctx.clip();
 
@@ -360,16 +364,15 @@
                 ctx.globalAlpha = 0.06;
                 ctx.drawImage(logoImg, canvas.width / 2 - 150, canvas.height / 2 - 150, 300, 300);
                 ctx.restore();
-
-                drawSlipBody(canvas, ctx, grouped);
+                drawSlipBody(canvas, ctx, grouped, grandTotalVal, nowString);
             };
 
             logoImg.onerror = function() {
-                drawSlipBody(canvas, ctx, grouped);
+                drawSlipBody(canvas, ctx, grouped, grandTotalVal, nowString);
             };
         }
 
-        function drawSlipBody(canvas, ctx, grouped) {
+        function drawSlipBody(canvas, ctx, grouped, grandTotalVal, nowString) {
             ctx.fillStyle = '#ec4899';
             ctx.fillRect(0, 0, canvas.width, 130);
 
@@ -386,7 +389,6 @@
             ctx.textAlign = 'left';
             ctx.fillText('ໂຕະ (Table): ' + tableNumber, 40, 175);
 
-            let nowString = new Date().toLocaleString();
             ctx.font = '14px sans-serif';
             ctx.fillStyle = '#6b7280';
             ctx.fillText('ວັນທີ: ' + nowString, 40, 200);
@@ -436,7 +438,6 @@
             ctx.fillStyle = '#ec4899';
             ctx.font = 'bold 24px sans-serif';
             ctx.textAlign = 'right';
-            let grandTotalVal = myOrderHistory.reduce((sum, item) => sum + item.price, 0);
             ctx.fillText(`${grandTotalVal.toLocaleString()} ₭`, 560, y);
 
             y += 65;
@@ -463,24 +464,44 @@
 
         function checkout() {
             if (cart.length === 0) return;
-
             const btn = document.getElementById('checkoutBtn');
             const originalText = btn.innerText;
             btn.innerText = 'ກຳລັງສົ່ງ...';
             btn.disabled = true;
 
-            let text = `--- 📋 ອໍເດີ້ ໂຕະ ${tableNumber} ---\n`;
-            let roundTotal = 0;
+            let grouped = getGroupedOrders(cart);
+            let roundTotal = cart.reduce((sum, item) => sum + item.price, 0);
 
-            cart.forEach((item, index) => {
-                text += `\n${index + 1}. ${item.name} - ${item.price.toLocaleString()} ₭`;
+            const now = new Date();
+            let dateStr = now.toISOString().split('T')[0];
+            let timeStr = now.toTimeString().split(' ')[0];
+
+            fetch(SHEETDB_URL, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "Date": dateStr,
+                    "Time": timeStr,
+                    "Table": String(tableNumber),
+                    "Items": JSON.stringify(grouped),
+                    "Total": roundTotal
+                })
+            })
+            .then(res => res.json())
+            .then(data => console.log("SheetDB Success:", data))
+            .catch(err => console.log("SheetDB Error:", err));
+
+            let text = `--- 📋 ອໍເດີ້ໃໝ່ ໂຕະ ${tableNumber} ---\n`;
+            grouped.forEach((item, index) => {
+                text += `\n${index + 1}. ${item.name} (x${item.qty}) - ${(item.price * item.qty).toLocaleString()} ₭`;
                 if (item.toppings && item.toppings.length > 0) {
                     text += `\n   + ທັອບປິ້ງ: ` + item.toppings.map(t => t.name).join(', ');
                 }
-                roundTotal += item.price;
             });
-
-            text += `\n\n💰 ລວມອໍເດີ້ຮອບນີ້: ${roundTotal.toLocaleString()} ₭`;
+            text += `\n\n💰 ລວມຍອດຮອບນີ້: ${roundTotal.toLocaleString()} ₭`;
 
             const apiKey = "LTU0NjIxODI3ODA"; 
             const encodedText = encodeURIComponent(text);
@@ -492,7 +513,7 @@
             localStorage.setItem('my_orders_' + tableNumber, JSON.stringify(myOrderHistory));
 
             setTimeout(() => {
-                alert('ສົ່ງອໍເດີ້ສຳເລັດ! ສາມາດສັ່ງເພີ່ມໄດ້ເລື້ອຍໆ');
+                alert('ສົ່ງອໍເດີ້ສຳເລັດ!');
                 cart = [];
                 updateCartUI();
                 btn.innerText = originalText;
