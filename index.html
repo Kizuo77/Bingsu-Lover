@@ -46,7 +46,7 @@
         </div>
     </div>
 
-    <!-- Confirm Cart Modal (ໜ້າກວດສອບລາຍການ ແລະ ເລືອກການຊໍາລະເງິນ) -->
+    <!-- Confirm Cart Modal -->
     <div id="confirmCartModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-end justify-center">
         <div class="bg-white w-full max-w-md rounded-t-3xl p-5 max-h-[90vh] flex flex-col shadow-2xl">
             <div class="flex justify-between items-center mb-3 border-b pb-2">
@@ -57,7 +57,6 @@
             <div id="confirm-cart-items" class="space-y-3 overflow-y-auto flex-1 pr-1 max-h-[40vh]"></div>
 
             <div class="mt-3 pt-3 border-t space-y-3">
-                <!-- เลือกวิธีชำระเงิน -->
                 <div>
                     <label class="font-bold text-gray-700 text-xs block mb-1.5">💳 ເລືອກປະເພດການຊໍາລະເງິນ:</label>
                     <div class="grid grid-cols-2 gap-2">
@@ -97,41 +96,42 @@
     <script>
         const SHEETDB_URL = "https://sheetdb.io/api/v1/zbrd6vx2a05hl";
 
+        // เพิ่มค่า available: true (ปกติ) หรือ false (สินค้าหมด) ไว้ที่เมนูได้เลย
         const menuData = [
             {
                 category: "🍧 ເມນູບິງຊູ (ເລືອກທັອບປິ້ງໄດ້)",
                 items: [
-                    { id: 1, name: "ບິງຊູຊັອກໂກ້ບຣາວນີ້", price: 89000, img: "https://lh3.googleusercontent.com/d/1_8Zyo4aM9PHvznOlm3EyKcIAr4oZeaMJ", hasOption: true },
-                    { id: 2, name: "ບິງຊູໝາກມ່ວງ", price: 89000, img: "https://lh3.googleusercontent.com/d/1O-gpnZxkyIivrvqYdC2s1kFHo2HIG-Qk", hasOption: true },
-                    { id: 3, name: "ບິງຊູຊາໄທ", price: 89000, img: "https://lh3.googleusercontent.com/d/1_Yq53PXcHCdv3CboFQYNODLZYk56QZsh", hasOption: true },
-                    { id: 4, name: "ບິງຊູຂຽວຊັອກຊິບ", price: 89000, img: "https://lh3.googleusercontent.com/d/1Xtw0CzQPcptSKduOOiIh6U5HjQLhMZ-_", hasOption: true },
-                    { id: 5, name: "ບິງຊູຊັອກໂກ້ບານານາ", price: 89000, img: "https://lh3.googleusercontent.com/d/1pWLPKt43sW65l_yAWyyRHdSTqsa-44CY", hasOption: true },
-                    { id: 6, name: "ບິງຊູຊາຂຽວ ບຣາວນີ້", price: 89000, img: "https://lh3.googleusercontent.com/d/1B2HS7EbmyaINLoL5UNcCJ9v7N_u6crIY", hasOption: true },
-                    { id: 7, name: "ບິງຊູບານານ່າພູເຂົາໄຟ", price: 89000, img: "https://lh3.googleusercontent.com/d/1ah81YOGhiyt5go50OLl2Ll9-Drba2DYP", hasOption: true },
-                    { id: 8, name: "ບິງຊູຄອນເຟັກໂກໂກ້ຄັ້ນ", price: 89000, img: "https://lh3.googleusercontent.com/d/1Yxss5ZOBmUzkcHjHPzLnekmfmFyWqCch", hasOption: true },
-                    { id: 9, name: "ບິງຊູໝາກໂມ", price: 119000, img: "https://lh3.googleusercontent.com/d/14-UUzC9FYDcxA7zIcpvLBSn0qRs9unMj", hasOption: true },
-                    { id: 10, name: "ບິງຊູເມລ່ອນ", price: 119000, img: "https://lh3.googleusercontent.com/d/1-2YG1JZ4d87l3jMVs_hmMGLl5OqXbapA", hasOption: true },
-                    { id: 11, name: "ບິງຊູແຄນຕາລຸບ", price: 119000, img: "https://lh3.googleusercontent.com/d/1cwsGq7hnxNuPAWBLl7XFowVrt-PAw7hp", hasOption: true }
+                    { id: 1, name: "ບິງຊູຊັອກໂກ້ບຣາວນີ້", price: 89000, img: "https://lh3.googleusercontent.com/d/1_8Zyo4aM9PHvznOlm3EyKcIAr4oZeaMJ", hasOption: true, available: true },
+                    { id: 2, name: "ບິງຊູໝາກມ່ວງ", price: 89000, img: "https://lh3.googleusercontent.com/d/1O-gpnZxkyIivrvqYdC2s1kFHo2HIG-Qk", hasOption: true, available: true },
+                    { id: 3, name: "ບິງຊູຊາໄທ", price: 89000, img: "https://lh3.googleusercontent.com/d/1_Yq53PXcHCdv3CboFQYNODLZYk56QZsh", hasOption: true, available: true },
+                    { id: 4, name: "ບິງຊູຂຽວຊັອກຊິບ", price: 89000, img: "https://lh3.googleusercontent.com/d/1Xtw0CzQPcptSKduOOiIh6U5HjQLhMZ-_", hasOption: true, available: true },
+                    { id: 5, name: "ບິງຊູຊັອກໂກ້ບານານາ", price: 89000, img: "https://lh3.googleusercontent.com/d/1pWLPKt43sW65l_yAWyyRHdSTqsa-44CY", hasOption: true, available: true },
+                    { id: 6, name: "ບິງຊູຊາຂຽວ ບຣາວນີ້", price: 89000, img: "https://lh3.googleusercontent.com/d/1B2HS7EbmyaINLoL5UNcCJ9v7N_u6crIY", hasOption: true, available: true },
+                    { id: 7, name: "ບິງຊູບານານ່າພູເຂົາໄຟ", price: 89000, img: "https://lh3.googleusercontent.com/d/1ah81YOGhiyt5go50OLl2Ll9-Drba2DYP", hasOption: true, available: true },
+                    { id: 8, name: "ບິງຊູຄອນເຟັກໂກໂກ້ຄັ້ນ", price: 89000, img: "https://lh3.googleusercontent.com/d/1Yxss5ZOBmUzkcHjHPzLnekmfmFyWqCch", hasOption: true, available: true },
+                    { id: 9, name: "ບິງຊູໝາກໂມ", price: 119000, img: "https://lh3.googleusercontent.com/d/14-UUzC9FYDcxA7zIcpvLBSn0qRs9unMj", hasOption: true, available: true },
+                    { id: 10, name: "ບິງຊູເມລ່ອນ", price: 119000, img: "https://lh3.googleusercontent.com/d/1-2YG1JZ4d87l3jMVs_hmMGLl5OqXbapA", hasOption: true, available: true },
+                    { id: 11, name: "ບິງຊູແຄນຕາລຸບ", price: 119000, img: "https://lh3.googleusercontent.com/d/1cwsGq7hnxNuPAWBLl7XFowVrt-PAw7hp", hasOption: true, available: true }
                 ]
             },
             {
                 category: "🍟 ເມນູຂອງກິນຫຼິ້ນ",
                 items: [
-                    { id: 101, name: "ເຟນຟາຍ", price: 30000, img: "https://lh3.googleusercontent.com/d/1I-n3U1-g0HgprEACsLX1n1QyaYNH7Md8", hasOption: false },
-                    { id: 102, name: "ຂາໄກ່ທອດ", price: 30000, img: "https://lh3.googleusercontent.com/d/1NCdiE8AyJC6CDZeS65SLcK-Q-4up4Y8r", hasOption: false },
-                    { id: 103, name: "ປີກໄກ່ທອດ", price: 30000, img: "https://lh3.googleusercontent.com/d/1Jd5OeMOYwQCbd82ue3_iwGrzKBajW_BD", hasOption: false },
-                    { id: 104, name: "ລູກຊີ້ນຮ໋ອດດັອກທອດ", price: 35000, img: "https://lh3.googleusercontent.com/d/1OvXbp8A4iOkFPqPH5xpsl-3rzZe9XQrG", hasOption: false }
+                    { id: 101, name: "ເຟນຟາຍ", price: 30000, img: "https://lh3.googleusercontent.com/d/1I-n3U1-g0HgprEACsLX1n1QyaYNH7Md8", hasOption: false, available: false },
+                    { id: 102, name: "ຂາໄກ່ທອດ", price: 30000, img: "https://lh3.googleusercontent.com/d/1NCdiE8AyJC6CDZeS65SLcK-Q-4up4Y8r", hasOption: false, available: false },
+                    { id: 103, name: "ປີກໄກ່ທອດ", price: 30000, img: "https://lh3.googleusercontent.com/d/1Jd5OeMOYwQCbd82ue3_iwGrzKBajW_BD", hasOption: false, available: false },
+                    { id: 104, name: "ລູກຊີ້ນຮ໋ອດດັອກທອດ", price: 35000, img: "https://lh3.googleusercontent.com/d/1OvXbp8A4iOkFPqPH5xpsl-3rzZe9XQrG", hasOption: false, available: false }
                 ]
             },
             {
                 category: "🧋 ເມນູນ້ຳ",
                 items: [
-                    { id: 201, name: "ນ້ໍາດື່ມ", price: 5000, img: "https://lh3.googleusercontent.com/d/1BMcR1eu786RwuwU2tWlGXuL6fu3LBKZw", hasOption: false },
-                    { id: 202, name: "ໂກໂກ້", price: 29000, img: "https://lh3.googleusercontent.com/d/17FnDviArIALaHK05MYFPAQG2YeUVeaOl", hasOption: false },
-                    { id: 203, name: "ຊາໄທ", price: 29000, img: "https://lh3.googleusercontent.com/d/1TnCO03twPtffmjV6kfb4NQtIZSLV68Eo", hasOption: false },
-                    { id: 204, name: "ຊາຂຽວ", price: 29000, img: "https://lh3.googleusercontent.com/d/1_taSrZzof01KP3f647Wci9J7zJLrm8QJ", hasOption: false },
-                    { id: 205, name: "ນົມສົດ", price: 29000, img: "https://lh3.googleusercontent.com/d/1dTMrBsfYyaJyHr2UknpgSTBsgbOzsgHq", hasOption: false },
-                    { id: 206, name: "ແປັບຊີ້", price: 15000, img: "https://lh3.googleusercontent.com/d/1P6_6P2rSD900hom2ZdmLgYB-s8Ay9FwA", hasOption: false }
+                    { id: 201, name: "ນ້ໍາດື່ມ", price: 5000, img: "https://lh3.googleusercontent.com/d/1BMcR1eu786RwuwU2tWlGXuL6fu3LBKZw", hasOption: false, available: true },
+                    { id: 202, name: "ໂກໂກ້", price: 29000, img: "https://lh3.googleusercontent.com/d/17FnDviArIALaHK05MYFPAQG2YeUVeaOl", hasOption: false, available: true },
+                    { id: 203, name: "ຊາໄທ", price: 29000, img: "https://lh3.googleusercontent.com/d/1TnCO03twPtffmjV6kfb4NQtIZSLV68Eo", hasOption: false, available: true },
+                    { id: 204, name: "ຊາຂຽວ", price: 29000, img: "https://lh3.googleusercontent.com/d/1_taSrZzof01KP3f647Wci9J7zJLrm8QJ", hasOption: false, available: true },
+                    { id: 205, name: "ນົມສົດ", price: 29000, img: "https://lh3.googleusercontent.com/d/1dTMrBsfYyaJyHr2UknpgSTBsgbOzsgHq", hasOption: false, available: true },
+                    { id: 206, name: "ແປັບຊີ້", price: 15000, img: "https://lh3.googleusercontent.com/d/1P6_6P2rSD900hom2ZdmLgYB-s8Ay9FwA", hasOption: false, available: true }
                 ]
             }
         ];
@@ -166,24 +166,28 @@
                 group.items.forEach(item => {
                     if (itemQuantities[item.id] === undefined) itemQuantities[item.id] = 1;
                     let qty = itemQuantities[item.id];
+                    let isAvailable = item.available !== false; // ถ้าไม่ได้ใส่ค่า ให้ถือว่ามีสินค้า (true)
+
+                    let actionButton = isAvailable 
+                        ? `<div class="flex items-center justify-between mt-2">
+                                <div class="flex items-center border rounded-lg bg-gray-50 overflow-hidden">
+                                    <button onclick="changeQty(${item.id}, -1)" class="px-2 py-0.5 text-gray-600 hover:bg-gray-200 font-bold text-xs">-</button>
+                                    <span id="qty-${item.id}" class="px-2.5 text-xs font-bold text-gray-800">${qty}</span>
+                                    <button onclick="changeQty(${item.id}, 1)" class="px-2 py-0.5 text-gray-600 hover:bg-gray-200 font-bold text-xs">+</button>
+                                </div>
+                                <button onclick="handleItemClick(${item.id})" class="${item.hasOption ? 'bg-pink-100 text-pink-600 hover:bg-pink-200' : 'bg-pink-500 text-white hover:bg-pink-600'} px-3 py-1 rounded-lg font-bold text-xs transition">
+                                    ${item.hasOption ? 'ເລືອກ' : 'ສັ່ງ'}
+                                </button>
+                           </div>`
+                        : `<div class="mt-2"><span class="bg-gray-200 text-gray-500 px-3 py-1 rounded-lg font-bold text-xs">❌ สินค้าหมด (Sold Out)</span></div>`;
 
                     groupHTML += `
-                        <div class="bg-white p-3 rounded-xl shadow-sm flex items-center space-x-3">
+                        <div class="bg-white p-3 rounded-xl shadow-sm flex items-center space-x-3 ${!isAvailable ? 'opacity-60' : ''}">
                             <img src="${item.img}" alt="${item.name}" class="w-20 h-20 min-w-[5rem] object-cover rounded-xl shadow-sm">
                             <div class="flex-1">
                                 <h3 class="font-bold text-gray-800 text-sm leading-snug">${item.name}</h3>
                                 <p class="text-pink-600 font-bold mt-0.5 text-sm">${item.price.toLocaleString()} ₭</p>
-                                
-                                <div class="flex items-center justify-between mt-2">
-                                    <div class="flex items-center border rounded-lg bg-gray-50 overflow-hidden">
-                                        <button onclick="changeQty(${item.id}, -1)" class="px-2 py-0.5 text-gray-600 hover:bg-gray-200 font-bold text-xs">-</button>
-                                        <span id="qty-${item.id}" class="px-2.5 text-xs font-bold text-gray-800">${qty}</span>
-                                        <button onclick="changeQty(${item.id}, 1)" class="px-2 py-0.5 text-gray-600 hover:bg-gray-200 font-bold text-xs">+</button>
-                                    </div>
-                                    <button onclick="handleItemClick(${item.id})" class="${item.hasOption ? 'bg-pink-100 text-pink-600 hover:bg-pink-200' : 'bg-pink-500 text-white hover:bg-pink-600'} px-3 py-1 rounded-lg font-bold text-xs transition">
-                                        ${item.hasOption ? 'ເລືອກ' : 'ສັ່ງ'}
-                                    </button>
-                                </div>
+                                ${actionButton}
                             </div>
                         </div>
                     `;
@@ -206,7 +210,7 @@
                 let match = g.items.find(i => i.id === id);
                 if (match) foundItem = match;
             });
-            if (!foundItem) return;
+            if (!foundItem || foundItem.available === false) return;
 
             let qty = itemQuantities[id] || 1;
             if (foundItem.hasOption) {
@@ -352,10 +356,8 @@
             return Object.values(map);
         }
 
-        // ฟังก์ชันสร้างและบันทึกสลิปลงเครื่องอัตโนมัติเมื่อกดสั่งซื้อ
         function generateAndSaveSlip(orderItems, grandTotalVal, nowString) {
             let grouped = getGroupedOrders(orderItems);
-
             let dynamicItemsHeight = 0;
             grouped.forEach(item => {
                 dynamicItemsHeight += 30;
@@ -499,7 +501,6 @@
             btn.innerText = 'ກຳລັງສົ່ງອໍເດີ້...';
             btn.disabled = true;
 
-            // สำรองข้อมูลตะกร้าปัจจุบันไว้สร้างสลิป
             let currentOrderItems = [...cart];
             let grouped = getGroupedOrders(currentOrderItems);
             let roundTotal = currentOrderItems.reduce((sum, item) => sum + item.price, 0);
@@ -509,7 +510,6 @@
             let timeStr = now.toTimeString().split(' ')[0];
             let nowString = now.toLocaleString();
 
-            // ส่งข้อมูลเข้า SheetDB
             fetch(SHEETDB_URL, {
                 method: 'POST',
                 headers: {
@@ -524,12 +524,8 @@
                     "Total": roundTotal,
                     "Payment": selectedPayment
                 })
-            })
-            .then(res => res.json())
-            .then(data => console.log("SheetDB Success:", data))
-            .catch(err => console.log("SheetDB Error:", err));
+            }).catch(err => console.log("SheetDB Error:", err));
 
-            // ส่งแจ้งเตือน Telegram
             let text = `--- 📋 ອໍເດີ້ໃໝ່ ໂຕະ ${tableNumber} ---\n`;
             grouped.forEach((item, index) => {
                 text += `\n${index + 1}. ${item.name} (x${item.qty}) - ${(item.price * item.qty).toLocaleString()} ₭`;
@@ -541,12 +537,9 @@
             text += `\n💰 ລວມຍອດຮອບນີ້: ${roundTotal.toLocaleString()} ₭`;
 
             const apiKey = "LTU0NjIxODI3ODA"; 
-            const encodedText = encodeURIComponent(text);
-            const telegramUrl = `https://api.callmebot.com/telegram/group.php?apikey=${apiKey}&text=${encodedText}`;
-
+            const telegramUrl = `https://api.callmebot.com/telegram/group.php?apikey=${apiKey}&text=${encodeURIComponent(text)}`;
             fetch(telegramUrl, { mode: 'no-cors' }).catch(e => console.error("Telegram Error", e));
 
-            // บันทึกสลิปภาพลงเครื่องอัตโนมัติทันที
             generateAndSaveSlip(currentOrderItems, roundTotal, nowString);
 
             setTimeout(() => {
