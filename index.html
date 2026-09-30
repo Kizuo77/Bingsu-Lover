@@ -4,10 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bingsu Lover - ສັ່ງອາຫານ</title>
+    
+    <link rel="apple-touch-icon" href="https://lh3.googleusercontent.com/d/1DUy6y4NfvVQ99p1FNEvByRjY_66tGBkB">
+    <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/d/1DUy6y4NfvVQ99p1FNEvByRjY_66tGBkB">
+    
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 <body class="bg-gray-50 font-sans pb-28">
-    <header class="bg-pink-500 text-white p-3 shadow-md sticky top-0 z-10 flex items-center justify-between">
+    <header class="bg-pink-500 text-white p-3.5 shadow-md sticky top-0 z-10 flex items-center justify-between">
         <div class="flex items-center space-x-3">
             <img src="https://lh3.googleusercontent.com/d/1DUy6y4NfvVQ99p1FNEvByRjY_66tGBkB" alt="ໂລໂກ້" class="w-10 h-10 rounded-full object-cover border-white shadow">
             <div>
@@ -15,9 +19,6 @@
                 <p class="text-xs text-pink-100">ໂຕະ: <span id="table-number" class="font-semibold">01</span></p>
             </div>
         </div>
-        <button onclick="showBill()" class="text-xs bg-pink-700 hover:bg-pink-800 px-3 py-1.5 rounded-full font-medium shadow transition">
-            🧾 ເຊັກບິນ / ບັນທຶກສະລິບ
-        </button>
     </header>
 
     <main id="menu-container" class="p-4 max-w-md mx-auto space-y-6"></main>
@@ -45,43 +46,52 @@
         </div>
     </div>
 
-    <!-- Bill Modal -->
-    <div id="billModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-sm rounded-2xl p-5 max-h-[90vh] flex flex-col shadow-xl">
-            <div class="text-gray-800 text-sm space-y-3 font-mono overflow-y-auto flex-1 pr-1" style="max-height: 60vh;">
-                <div class="text-center border-b pb-3">
-                    <h2 class="font-bold text-lg">BINGSU LOVER</h2>
-                    <p class="text-xs text-gray-500">ໃບເກັບເງິນ / Receipt Slip</p>
-                    <p class="text-xs mt-1">ໂຕະ: <span id="bill-table" class="font-bold">01</span></p>
-                    <p class="text-xs" id="bill-time">-</p>
-                </div>
-                <div id="bill-items" class="space-y-2 border-b pb-3 text-xs"></div>
-                <div class="flex justify-between font-bold text-base pt-1">
-                    <span>ລວມຍອດທັງໝົດ:</span>
-                    <span id="bill-total" class="text-pink-600">0 ₭</span>
-                </div>
-                <div class="text-center text-xs text-gray-400 pt-2 border-t">
-                    <p>ຂອບໃຈທີ່ໃຊ້ບໍລິການ!</p>
-                </div>
+    <!-- Confirm Cart Modal (ໜ້າກວດສອບລາຍການ ແລະ ເລືອກການຊໍາລະເງິນ) -->
+    <div id="confirmCartModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-end justify-center">
+        <div class="bg-white w-full max-w-md rounded-t-3xl p-5 max-h-[90vh] flex flex-col shadow-2xl">
+            <div class="flex justify-between items-center mb-3 border-b pb-2">
+                <h2 class="font-bold text-base text-gray-800">🛒 ກວດສອບລາຍການ ແລະ ຊໍາລະເງິນ</h2>
+                <button onclick="closeConfirmCartModal()" class="text-gray-400 hover:text-gray-600 font-bold text-xl">&times;</button>
             </div>
             
-            <div class="mt-4 pt-3 border-t space-y-2 shrink-0">
-                <button onclick="generateBankSlip()" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-2.5 rounded-xl font-bold shadow text-sm">
-                    📸 ບັນທຶກສະລິບ (Save Slip)
-                </button>
-                <button onclick="closeBill()" class="w-full bg-gray-800 text-white py-2 rounded-xl font-bold text-xs">
-                    ປິດໜ້າຕ່າງ
+            <div id="confirm-cart-items" class="space-y-3 overflow-y-auto flex-1 pr-1 max-h-[40vh]"></div>
+
+            <div class="mt-3 pt-3 border-t space-y-3">
+                <!-- เลือกวิธีชำระเงิน -->
+                <div>
+                    <label class="font-bold text-gray-700 text-xs block mb-1.5">💳 ເລືອກປະເພດການຊໍາລະເງິນ:</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="border-2 rounded-xl p-2.5 flex items-center justify-center space-x-2 cursor-pointer transition border-pink-500 bg-pink-50" id="label-cash">
+                            <input type="radio" name="payment-method" value="เงินสด (Cash)" checked onchange="setPaymentMethod('cash')" class="accent-pink-500">
+                            <span class="text-xs font-bold text-gray-800">💵 ເງິນສົດ</span>
+                        </label>
+                        <label class="border-2 rounded-xl p-2.5 flex items-center justify-center space-x-2 cursor-pointer transition border-gray-200 bg-white" id="label-transfer">
+                            <input type="radio" name="payment-method" value="เงินโอน (Transfer)" onchange="setPaymentMethod('transfer')" class="accent-pink-500">
+                            <span class="text-xs font-bold text-gray-800">📱 ໂອນຈ່າຍ</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center font-bold text-base pt-1">
+                    <span class="text-gray-700">ລວມຍອດທັງໝົດ:</span>
+                    <span id="confirm-cart-total" class="text-pink-600 text-lg">0 ₭</span>
+                </div>
+                
+                <button id="checkoutBtn" onclick="submitOrder()" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-xl font-bold shadow text-sm transition">
+                    ຢືນຢັນສັ່ງອາຫານ ແລະ ບັນທຶກໃບບິນ 🚀
                 </button>
             </div>
         </div>
     </div>
 
-    <div id="cartBar" class="fixed bottom-0 left-0 right-0 bg-white border-t p-4 flex justify-between items-center max-w-md mx-auto shadow-lg hidden">
+    <div id="cartBar" class="fixed bottom-0 left-0 right-0 bg-white border-t p-4 flex justify-between items-center max-w-md mx-auto shadow-lg hidden z-30">
         <div>
             <p class="text-xs text-gray-500"><span id="cartCount">0</span> ລາຍການໃນກະຕ່າ</p>
             <p id="cartTotal" class="font-bold text-lg text-gray-800">0 ₭</p>
         </div>
-        <button id="checkoutBtn" onclick="checkout()" class="bg-pink-500 text-white px-6 py-2.5 rounded-xl font-bold shadow">ຢືນຢັນສັ່ງອາຫານ</button>
+        <button onclick="openConfirmCartModal()" class="bg-pink-500 hover:bg-pink-600 text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow transition">
+            🛒 ตรวจสอบตะกร้า
+        </button>
     </div>
 
     <script>
@@ -141,11 +151,11 @@
         ];
 
         let cart = [];
-        let itemQuantities = {}; // เก็บจำนวนเริ่มต้นของแต่ละเมนู
+        let itemQuantities = {};
+        let selectedPayment = "เงินสด (Cash)";
         const urlParams = new URLSearchParams(window.location.search);
         const tableNumber = urlParams.get('table') || '01';
         let currentItem = null;
-        let myOrderHistory = JSON.parse(localStorage.getItem('my_orders_' + tableNumber)) || [];
         document.getElementById('table-number').innerText = tableNumber;
 
         function renderMenu() {
@@ -164,7 +174,6 @@
                                 <h3 class="font-bold text-gray-800 text-sm leading-snug">${item.name}</h3>
                                 <p class="text-pink-600 font-bold mt-0.5 text-sm">${item.price.toLocaleString()} ₭</p>
                                 
-                                <!-- Qty & Add UI -->
                                 <div class="flex items-center justify-between mt-2">
                                     <div class="flex items-center border rounded-lg bg-gray-50 overflow-hidden">
                                         <button onclick="changeQty(${item.id}, -1)" class="px-2 py-0.5 text-gray-600 hover:bg-gray-200 font-bold text-xs">-</button>
@@ -204,7 +213,7 @@
                 openModal(foundItem, qty);
             } else {
                 addToCartDirect(foundItem.name, foundItem.price, qty);
-                itemQuantities[id] = 1; // รีเซ็ตจำนวนกลับเป็น 1
+                itemQuantities[id] = 1;
                 document.getElementById(`qty-${id}`).innerText = 1;
             }
         }
@@ -273,6 +282,65 @@
             } else { cartBar.classList.add('hidden'); }
         }
 
+        function setPaymentMethod(method) {
+            selectedPayment = method === 'cash' ? 'เงินสด (Cash)' : 'เงินโอน (Transfer)';
+            if (method === 'cash') {
+                document.getElementById('label-cash').className = "border-2 rounded-xl p-2.5 flex items-center justify-center space-x-2 cursor-pointer transition border-pink-500 bg-pink-50";
+                document.getElementById('label-transfer').className = "border-2 rounded-xl p-2.5 flex items-center justify-center space-x-2 cursor-pointer transition border-gray-200 bg-white";
+            } else {
+                document.getElementById('label-transfer').className = "border-2 rounded-xl p-2.5 flex items-center justify-center space-x-2 cursor-pointer transition border-pink-500 bg-pink-50";
+                document.getElementById('label-cash').className = "border-2 rounded-xl p-2.5 flex items-center justify-center space-x-2 cursor-pointer transition border-gray-200 bg-white";
+            }
+        }
+
+        function openConfirmCartModal() {
+            const container = document.getElementById('confirm-cart-items');
+            container.innerHTML = '';
+            let grandTotal = 0;
+
+            if (cart.length === 0) {
+                container.innerHTML = `<p class="text-center text-gray-400 py-4 text-sm">ບໍ່ມີລາຍການໃນກະຕ່າ</p>`;
+                document.getElementById('confirm-cart-total').innerText = '0 ₭';
+                return;
+            }
+
+            cart.forEach((item, index) => {
+                grandTotal += item.price;
+                let toppingsText = item.toppings && item.toppings.length > 0 
+                    ? `<div class="text-gray-500 text-[11px]">+ ${item.toppings.map(t => t.name).join(', ')}</div>` 
+                    : '';
+
+                container.innerHTML += `
+                    <div class="bg-gray-50 p-3 rounded-2xl flex justify-between items-center border border-gray-100">
+                        <div class="space-y-0.5 flex-1 pr-2">
+                            <p class="font-bold text-gray-800 text-xs">${index + 1}. ${item.name}</p>
+                            ${toppingsText}
+                            <p class="text-xs text-pink-600 font-bold">${item.price.toLocaleString()} ₭</p>
+                        </div>
+                        <button onclick="removeCartItem(${index})" class="bg-red-50 hover:bg-red-100 text-red-500 w-8 h-8 rounded-xl font-bold text-xs flex items-center justify-center transition shrink-0" title="ລຶບລາຍການນີ້">
+                            🗑️
+                        </button>
+                    </div>
+                `;
+            });
+
+            document.getElementById('confirm-cart-total').innerText = grandTotal.toLocaleString() + ' ₭';
+            document.getElementById('confirmCartModal').classList.remove('hidden');
+        }
+
+        function closeConfirmCartModal() {
+            document.getElementById('confirmCartModal').classList.add('hidden');
+        }
+
+        function removeCartItem(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+            openConfirmCartModal();
+            if (cart.length === 0) {
+                closeConfirmCartModal();
+            }
+        }
+
         function getGroupedOrders(orders) {
             let map = {};
             orders.forEach(item => {
@@ -284,43 +352,9 @@
             return Object.values(map);
         }
 
-        function showBill() {
-            document.getElementById('bill-table').innerText = tableNumber;
-            document.getElementById('bill-time').innerText = new Date().toLocaleString();
-            const itemsContainer = document.getElementById('bill-items');
-            itemsContainer.innerHTML = '';
-
-            if (myOrderHistory.length === 0) {
-                itemsContainer.innerHTML = `<p class="text-center text-gray-400 py-4">ຍັງບໍ່ມີລາຍການສັ່ງອາຫານ</p>`;
-                document.getElementById('bill-total').innerText = '0 ₭';
-            } else {
-                let grouped = getGroupedOrders(myOrderHistory);
-                let grandTotal = 0;
-                grouped.forEach((item, index) => {
-                    let totalItemPrice = item.price * item.qty;
-                    let html = `<div class="flex justify-between"><span>${index + 1}. ${item.name} ${item.qty > 1 ? '<span class="text-pink-600 font-bold">x' + item.qty + '</span>' : ''}</span><span>${totalItemPrice.toLocaleString()} ₭</span></div>`;
-                    if (item.toppings && item.toppings.length > 0) {
-                        html += `<div class="text-gray-500 pl-3 text-[10px]">+ ${item.toppings.map(t => t.name).join(', ')}</div>`;
-                    }
-                    itemsContainer.innerHTML += html;
-                    grandTotal += totalItemPrice;
-                });
-                document.getElementById('bill-total').innerText = grandTotal.toLocaleString() + ' ₭';
-            }
-            document.getElementById('billModal').classList.remove('hidden');
-        }
-
-        function closeBill() { document.getElementById('billModal').classList.add('hidden'); }
-
-        function generateBankSlip() {
-            if (myOrderHistory.length === 0) {
-                alert('ຍັງບໍ່ມີລາຍການໃນບິນ!');
-                return;
-            }
-
-            let grouped = getGroupedOrders(myOrderHistory);
-            let grandTotalVal = myOrderHistory.reduce((sum, item) => sum + item.price, 0);
-            const nowString = new Date().toLocaleString();
+        // ฟังก์ชันสร้างและบันทึกสลิปลงเครื่องอัตโนมัติเมื่อกดสั่งซื้อ
+        function generateAndSaveSlip(orderItems, grandTotalVal, nowString) {
+            let grouped = getGroupedOrders(orderItems);
 
             let dynamicItemsHeight = 0;
             grouped.forEach(item => {
@@ -332,7 +366,7 @@
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             canvas.width = 600;
-            canvas.height = 280 + dynamicItemsHeight + 120;
+            canvas.height = 320 + dynamicItemsHeight + 120;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             function drawRoundedRect(x, y, width, height, radius) {
@@ -392,15 +426,16 @@
             ctx.font = '14px sans-serif';
             ctx.fillStyle = '#6b7280';
             ctx.fillText('ວັນທີ: ' + nowString, 40, 200);
+            ctx.fillText('ຊຳລະຜ່ານ: ' + selectedPayment, 40, 225);
 
             ctx.strokeStyle = '#e5e7eb';
             ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.moveTo(40, 220);
-            ctx.lineTo(560, 220);
+            ctx.moveTo(40, 245);
+            ctx.lineTo(560, 245);
             ctx.stroke();
 
-            let y = 265;
+            let y = 290;
             grouped.forEach((item, index) => {
                 ctx.fillStyle = '#1f2937';
                 ctx.font = 'bold 17px sans-serif';
@@ -455,27 +490,26 @@
             link.download = fileName;
             link.href = canvas.toDataURL('image/png');
             link.click();
-
-            localStorage.removeItem('my_orders_' + tableNumber);
-            myOrderHistory = [];
-            showBill();
-            alert('ບັນທຶກສະລິບສຳເລັດ!');
         }
 
-        function checkout() {
+        function submitOrder() {
             if (cart.length === 0) return;
             const btn = document.getElementById('checkoutBtn');
             const originalText = btn.innerText;
-            btn.innerText = 'ກຳລັງສົ່ງ...';
+            btn.innerText = 'ກຳລັງສົ່ງອໍເດີ້...';
             btn.disabled = true;
 
-            let grouped = getGroupedOrders(cart);
-            let roundTotal = cart.reduce((sum, item) => sum + item.price, 0);
+            // สำรองข้อมูลตะกร้าปัจจุบันไว้สร้างสลิป
+            let currentOrderItems = [...cart];
+            let grouped = getGroupedOrders(currentOrderItems);
+            let roundTotal = currentOrderItems.reduce((sum, item) => sum + item.price, 0);
 
             const now = new Date();
             let dateStr = now.toISOString().split('T')[0];
             let timeStr = now.toTimeString().split(' ')[0];
+            let nowString = now.toLocaleString();
 
+            // ส่งข้อมูลเข้า SheetDB
             fetch(SHEETDB_URL, {
                 method: 'POST',
                 headers: {
@@ -487,13 +521,15 @@
                     "Time": timeStr,
                     "Table": String(tableNumber),
                     "Items": JSON.stringify(grouped),
-                    "Total": roundTotal
+                    "Total": roundTotal,
+                    "Payment": selectedPayment
                 })
             })
             .then(res => res.json())
             .then(data => console.log("SheetDB Success:", data))
             .catch(err => console.log("SheetDB Error:", err));
 
+            // ส่งแจ้งเตือน Telegram
             let text = `--- 📋 ອໍເດີ້ໃໝ່ ໂຕະ ${tableNumber} ---\n`;
             grouped.forEach((item, index) => {
                 text += `\n${index + 1}. ${item.name} (x${item.qty}) - ${(item.price * item.qty).toLocaleString()} ₭`;
@@ -501,7 +537,8 @@
                     text += `\n   + ທັອບປິ້ງ: ` + item.toppings.map(t => t.name).join(', ');
                 }
             });
-            text += `\n\n💰 ລວມຍອດຮອບນີ້: ${roundTotal.toLocaleString()} ₭`;
+            text += `\n\n💳 ປະເພດຊຳລະ: ${selectedPayment}`;
+            text += `\n💰 ລວມຍອດຮອບນີ້: ${roundTotal.toLocaleString()} ₭`;
 
             const apiKey = "LTU0NjIxODI3ODA"; 
             const encodedText = encodeURIComponent(text);
@@ -509,13 +546,14 @@
 
             fetch(telegramUrl, { mode: 'no-cors' }).catch(e => console.error("Telegram Error", e));
 
-            myOrderHistory = myOrderHistory.concat(cart);
-            localStorage.setItem('my_orders_' + tableNumber, JSON.stringify(myOrderHistory));
+            // บันทึกสลิปภาพลงเครื่องอัตโนมัติทันที
+            generateAndSaveSlip(currentOrderItems, roundTotal, nowString);
 
             setTimeout(() => {
-                alert('ສົ່ງອໍເດີ້ສຳເລັດ!');
+                alert('ສົ່ງອໍເດີ້ສຳເລັດ ແລະ ບັນທຶກສະລິບລົງເຄື່ອງແລ້ວ!');
                 cart = [];
                 updateCartUI();
+                closeConfirmCartModal();
                 btn.innerText = originalText;
                 btn.disabled = false;
             }, 1000);
