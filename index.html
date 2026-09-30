@@ -94,7 +94,6 @@
     </div>
 
     <script>
-        // ใช้ลิงก์ Apps Script ตัวเดียวกันกับหน้าแอดมินและรายจ่าย
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby3X6oG8MuCJytbXxekcg-zDNfQTBf23MMPA5G-rG3oBEUF_ccsOLj-txrS0ZvJP9bpcQ/exec";
 
         const menuData = [
@@ -120,7 +119,8 @@
                     { id: 101, name: "ເຟນຟາຍ", price: 30000, img: "https://lh3.googleusercontent.com/d/1I-n3U1-g0HgprEACsLX1n1QyaYNH7Md8", hasOption: false, available: false },
                     { id: 102, name: "ຂາໄກ່ທອດ", price: 30000, img: "https://lh3.googleusercontent.com/d/1NCdiE8AyJC6CDZeS65SLcK-Q-4up4Y8r", hasOption: false, available: false },
                     { id: 103, name: "ປີກໄກ່ທອດ", price: 30000, img: "https://lh3.googleusercontent.com/d/1Jd5OeMOYwQCbd82ue3_iwGrzKBajW_BD", hasOption: false, available: false },
-                    { id: 104, name: "ລູກຊີ້ນຮ໋ອດດັອກທອດ", price: 35000, img: "https://lh3.googleusercontent.com/d/1OvXbp8A4iOkFPqPH5xpsl-3rzZe9XQrG", hasOption: false, available: false }
+                    { id: 104, name: "ລູກຊີ້ນຮ໋ອດດັອກທອດ", price: 35000, img: "https://lh3.googleusercontent.com/d/1OvXbp8A4iOkFPqPH5xpsl-3rzZe9XQrG", hasOption: false, available: false },
+                    { id: 105, name: "ມາມາເກົາຫຼີ", price: 40000, img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTc9VT6Aai2Y_jBr6PQl4S_-yU05xFBIoGHOfBDC5TB0TNbIlTwoEcQN6fd&s=10", hasOption: false, available: true }
                 ]
             },
             {
@@ -510,10 +510,9 @@
             let timeStr = now.toTimeString().split(' ')[0];
             let nowString = now.toLocaleString();
 
-            // ใช้การส่งข้อมูลแบบ JSON ไปยัง Google Apps Script โดยตรง
             fetch(SCRIPT_URL, {
                 method: 'POST',
-                mode: 'no-cors', // ป้องกันปัญหา CORS บล็อกคำขอ
+                mode: 'no-cors',
                 headers: {
                     'Content-Type': 'application/json'
                 },
