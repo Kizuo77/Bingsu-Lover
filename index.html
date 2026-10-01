@@ -10,27 +10,28 @@
     
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
-<body class="bg-gray-50 font-sans pb-28">
-    <header class="bg-pink-500 text-white p-3.5 shadow-md sticky top-0 z-10 flex items-center justify-between">
-        <div class="flex items-center space-x-3">
-            <img src="https://lh3.googleusercontent.com/d/1DUy6y4NfvVQ99p1FNEvByRjY_66tGBkB" alt="ໂລໂກ້" class="w-10 h-10 rounded-full object-cover border-white shadow">
+<body class="bg-gray-100 font-sans p-4 pb-28">
+    <!-- Header โค้งมนสีชมพูสไตล์พรีเมียม (เอาปุ่มขวาออกแล้ว) -->
+    <header class="bg-gradient-to-r from-pink-600 to-rose-500 text-white p-4.5 rounded-3xl shadow-lg flex items-center mb-5 max-w-md mx-auto">
+        <div class="flex items-center space-x-3.5">
+            <img src="https://lh3.googleusercontent.com/d/1DUy6y4NfvVQ99p1FNEvByRjY_66tGBkB" alt="ໂລໂກ້" class="w-12 h-12 rounded-full object-cover border-2 border-white/30 shadow-md">
             <div>
                 <h1 class="text-base font-bold leading-tight">Bingsu Lover</h1>
-                <p class="text-xs text-pink-100">ໂຕະ: <span id="table-number" class="font-semibold">01</span></p>
+                <p class="text-xs text-pink-100 mt-0.5">ໂຕະ (Table): <span id="table-number" class="font-semibold text-white">01</span></p>
             </div>
         </div>
     </header>
 
-    <main id="menu-container" class="p-4 max-w-md mx-auto space-y-6"></main>
+    <main id="menu-container" class="max-w-md mx-auto space-y-4"></main>
 
     <!-- Option Modal -->
     <div id="optionModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-end justify-center">
-        <div class="bg-white w-full max-w-md rounded-t-2xl p-5 max-h-[85vh] overflow-y-auto">
+        <div class="bg-white w-full max-w-md rounded-t-3xl p-5 max-h-[85vh] overflow-y-auto shadow-2xl">
             <div class="flex justify-between items-center mb-4 border-b pb-2">
-                <h2 id="modalTitle" class="font-bold text-lg text-gray-800"></h2>
+                <h2 id="modalTitle" class="font-bold text-base text-gray-800"></h2>
                 <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 font-bold text-xl">&times;</button>
             </div>
-            <div class="space-y-4 text-sm">
+            <div class="space-y-4 text-xs">
                 <div>
                     <label class="font-bold text-gray-700 block mb-2">ເລືອກທັອບປິ້ງເພີ່ມ</label>
                     <div id="topping-list" class="space-y-2"></div>
@@ -38,10 +39,10 @@
             </div>
             <div class="mt-6 pt-4 border-t flex items-center justify-between">
                 <div>
-                    <p class="text-xs text-gray-500">ລາຄາລວມ</p>
-                    <p id="modalPrice" class="font-bold text-lg text-pink-600">0 ₭</p>
+                    <p class="text-[11px] text-gray-500 font-bold">ລາຄາລວມ</p>
+                    <p id="modalPrice" class="font-bold text-base text-pink-600">0 ₭</p>
                 </div>
-                <button onclick="addToCartModal()" class="bg-pink-500 text-white px-6 py-2.5 rounded-xl font-bold shadow hover:bg-pink-600">ເພີ່ມໃສ່ກະຕ່າ</button>
+                <button onclick="addToCartModal()" class="bg-pink-600 hover:bg-pink-700 text-white px-5 py-2.5 rounded-xl font-bold shadow text-xs transition">ເພີ່ມໃສ່ກະຕ່າ</button>
             </div>
         </div>
     </div>
@@ -54,41 +55,42 @@
                 <button onclick="closeConfirmCartModal()" class="text-gray-400 hover:text-gray-600 font-bold text-xl">&times;</button>
             </div>
             
-            <div id="confirm-cart-items" class="space-y-3 overflow-y-auto flex-1 pr-1 max-h-[40vh]"></div>
+            <div id="confirm-cart-items" class="space-y-3 overflow-y-auto flex-1 pr-1 max-h-[40vh] text-xs"></div>
 
-            <div class="mt-3 pt-3 border-t space-y-3">
+            <div class="mt-3 pt-3 border-t space-y-3 text-xs">
                 <div>
-                    <label class="font-bold text-gray-700 text-xs block mb-1.5">💳 ເລືອກປະເພດການຊໍາລະເງິນ:</label>
+                    <label class="font-bold text-gray-700 block mb-1.5">💳 ເລືອກປະເພດການຊໍາລະເງິນ:</label>
                     <div class="grid grid-cols-2 gap-2">
                         <label class="border-2 rounded-xl p-2.5 flex items-center justify-center space-x-2 cursor-pointer transition border-pink-500 bg-pink-50" id="label-cash">
-                            <input type="radio" name="payment-method" value="เงินสด (Cash)" checked onchange="setPaymentMethod('cash')" class="accent-pink-500">
-                            <span class="text-xs font-bold text-gray-800">💵 ເງິນສົດ</span>
+                            <input type="radio" name="payment-method" value="เงินสด (Cash)" checked onchange="setPaymentMethod('cash')" class="accent-pink-600">
+                            <span class="font-bold text-gray-800">💵 ເງິນສົດ</span>
                         </label>
                         <label class="border-2 rounded-xl p-2.5 flex items-center justify-center space-x-2 cursor-pointer transition border-gray-200 bg-white" id="label-transfer">
-                            <input type="radio" name="payment-method" value="เงินโอน (Transfer)" onchange="setPaymentMethod('transfer')" class="accent-pink-500">
-                            <span class="text-xs font-bold text-gray-800">📱 ໂອນຈ່າຍ</span>
+                            <input type="radio" name="payment-method" value="เงินโอน (Transfer)" onchange="setPaymentMethod('transfer')" class="accent-pink-600">
+                            <span class="font-bold text-gray-800">📱 ໂອນຈ່າຍ</span>
                         </label>
                     </div>
                 </div>
 
-                <div class="flex justify-between items-center font-bold text-base pt-1">
+                <div class="flex justify-between items-center font-bold text-sm pt-1">
                     <span class="text-gray-700">ລວມຍອດທັງໝົດ:</span>
-                    <span id="confirm-cart-total" class="text-pink-600 text-lg">0 ₭</span>
+                    <span id="confirm-cart-total" class="text-pink-600 text-base">0 ₭</span>
                 </div>
                 
-                <button id="checkoutBtn" onclick="submitOrder()" class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-xl font-bold shadow text-sm transition">
+                <button id="checkoutBtn" onclick="submitOrder()" class="w-full bg-pink-600 hover:bg-pink-700 text-white py-3 rounded-xl font-bold shadow text-xs transition">
                     ຢືນຢັນສັ່ງອາຫານ ແລະ ບັນທຶກໃບບິນ 🚀
                 </button>
             </div>
         </div>
     </div>
 
+    <!-- Bottom Cart Bar -->
     <div id="cartBar" class="fixed bottom-0 left-0 right-0 bg-white border-t p-4 flex justify-between items-center max-w-md mx-auto shadow-lg hidden z-30">
         <div>
-            <p class="text-xs text-gray-500"><span id="cartCount">0</span> ລາຍການໃນກະຕ່າ</p>
-            <p id="cartTotal" class="font-bold text-lg text-gray-800">0 ₭</p>
+            <p class="text-xs text-gray-500"><span id="cartCount" class="font-bold text-pink-600">0</span> ລາຍການໃນກະຕ່າ</p>
+            <p id="cartTotal" class="font-bold text-base text-gray-800">0 ₭</p>
         </div>
-        <button onclick="openConfirmCartModal()" class="bg-pink-500 hover:bg-pink-600 text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow transition">
+        <button onclick="openConfirmCartModal()" class="bg-pink-600 hover:bg-pink-700 text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow transition">
             🛒 ตรวจสอบตะกร้า
         </button>
     </div>
@@ -172,32 +174,32 @@
             const container = document.getElementById('menu-container');
             container.innerHTML = '';
             menuData.forEach(group => {
-                let groupHTML = `<div class="space-y-3"><h2 class="font-bold text-gray-700 border-b pb-1 text-base">${group.category}</h2>`;
+                let groupHTML = `<div class="space-y-3"><h2 class="font-bold text-gray-700 text-sm px-1">${group.category}</h2>`;
                 group.items.forEach(item => {
                     if (itemQuantities[item.id] === undefined) itemQuantities[item.id] = 1;
                     let qty = itemQuantities[item.id];
                     let isAvailable = item.available !== false;
 
-                    let actionButton = isAvailable 
-                        ? `<div class="flex items-center justify-between mt-2">
-                                <div class="flex items-center border rounded-lg bg-gray-50 overflow-hidden">
-                                    <button onclick="changeQty(${item.id}, -1)" class="px-2 py-0.5 text-gray-600 hover:bg-gray-200 font-bold text-xs">-</button>
-                                    <span id="qty-${item.id}" class="px-2.5 text-xs font-bold text-gray-800">${qty}</span>
-                                    <button onclick="changeQty(${item.id}, 1)" class="px-2 py-0.5 text-gray-600 hover:bg-gray-200 font-bold text-xs">+</button>
+                    let actionSection = isAvailable 
+                        ? `<div class="flex items-center justify-between mt-2" onclick="event.stopPropagation()">
+                                <div class="flex items-center border border-pink-200 rounded-xl bg-pink-50/50 overflow-hidden shadow-xs">
+                                    <button onclick="changeQty(${item.id}, -1)" class="px-2.5 py-1 text-gray-600 hover:bg-pink-100 font-bold text-xs">-</button>
+                                    <span id="qty-${item.id}" class="px-3 text-xs font-bold text-pink-700">${qty}</span>
+                                    <button onclick="changeQty(${item.id}, 1)" class="px-2.5 py-1 text-gray-600 hover:bg-pink-100 font-bold text-xs">+</button>
                                 </div>
-                                <button onclick="handleItemClick(${item.id})" class="${item.hasOption ? 'bg-pink-100 text-pink-600 hover:bg-pink-200' : 'bg-pink-500 text-white hover:bg-pink-600'} px-3 py-1 rounded-lg font-bold text-xs transition">
+                                <button onclick="handleItemClick(${item.id})" class="bg-pink-600 hover:bg-pink-700 text-white px-4 py-1.5 rounded-xl font-bold text-xs transition shadow-sm">
                                     ${item.hasOption ? 'ເລືອກ' : 'ສັ່ງ'}
                                 </button>
                            </div>`
-                        : `<div class="mt-2"><span class="bg-gray-200 text-gray-500 px-3 py-1 rounded-lg font-bold text-xs">❌ สินค้าหมด (Sold Out)</span></div>`;
+                        : `<div class="mt-2"><span class="bg-gray-100 text-gray-400 px-3 py-1 rounded-lg font-bold text-xs">❌ สินค้าหมด</span></div>`;
 
                     groupHTML += `
-                        <div class="bg-white p-3 rounded-xl shadow-sm flex items-center space-x-3 ${!isAvailable ? 'opacity-60' : ''}">
-                            <img src="${item.img}" alt="${item.name}" class="w-20 h-20 min-w-[5rem] object-cover rounded-xl shadow-sm">
+                        <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-gray-100 flex items-center space-x-3 ${!isAvailable ? 'opacity-50' : ''}">
+                            <img src="${item.img}" alt="${item.name}" class="w-20 h-20 min-w-[5rem] object-cover rounded-xl shadow-xs">
                             <div class="flex-1">
                                 <h3 class="font-bold text-gray-800 text-sm leading-snug">${item.name}</h3>
                                 <p class="text-pink-600 font-bold mt-0.5 text-sm">${item.price.toLocaleString()} ₭</p>
-                                ${actionButton}
+                                ${actionSection}
                             </div>
                         </div>
                     `;
@@ -239,9 +241,9 @@
             toppingContainer.innerHTML = '';
             toppingsData.forEach((top) => {
                 toppingContainer.innerHTML += `
-                    <label class="flex items-center justify-between border p-2 rounded-lg cursor-pointer">
-                        <span>${top.name} (+${top.price.toLocaleString()} ₭)</span>
-                        <input type="checkbox" value="${top.name}" data-price="${top.price}" class="topping-checkbox accent-pink-500 w-4 h-4" onchange="updateModalPrice()">
+                    <label class="flex items-center justify-between border border-pink-100 p-2.5 rounded-xl cursor-pointer hover:bg-pink-50/50 transition">
+                        <span class="font-medium text-gray-700">${top.name} (+${top.price.toLocaleString()} ₭)</span>
+                        <input type="checkbox" value="${top.name}" data-price="${top.price}" class="topping-checkbox accent-pink-600 w-4 h-4" onchange="updateModalPrice()">
                     </label>
                 `;
             });
@@ -313,7 +315,7 @@
             let grandTotal = 0;
 
             if (cart.length === 0) {
-                container.innerHTML = `<p class="text-center text-gray-400 py-4 text-sm">ບໍ່ມີລາຍການໃນກະຕ່າ</p>`;
+                container.innerHTML = `<p class="text-center text-gray-400 py-4 text-xs">ບໍ່ມີລາຍການໃນກະຕ່າ</p>`;
                 document.getElementById('confirm-cart-total').innerText = '0 ₭';
                 return;
             }
@@ -321,7 +323,7 @@
             cart.forEach((item, index) => {
                 grandTotal += item.price;
                 let toppingsText = item.toppings && item.toppings.length > 0 
-                    ? `<div class="text-gray-500 text-[11px]">+ ${item.toppings.map(t => t.name).join(', ')}</div>` 
+                    ? `<div class="text-gray-400 text-[11px]">+ ${item.toppings.map(t => t.name).join(', ')}</div>` 
                     : '';
 
                 container.innerHTML += `
@@ -419,7 +421,7 @@
         }
 
         function drawSlipBody(canvas, ctx, grouped, grandTotalVal, nowString) {
-            ctx.fillStyle = '#ec4899';
+            ctx.fillStyle = '#db2777';
             ctx.fillRect(0, 0, canvas.width, 130);
 
             ctx.fillStyle = '#ffffff';
@@ -482,7 +484,7 @@
             ctx.textAlign = 'left';
             ctx.fillText('ລວມຍອດທັງໝົດ (Total):', 40, y);
 
-            ctx.fillStyle = '#ec4899';
+            ctx.fillStyle = '#db2777';
             ctx.font = 'bold 24px sans-serif';
             ctx.textAlign = 'right';
             ctx.fillText(`${grandTotalVal.toLocaleString()} ₭`, 560, y);
@@ -507,7 +509,6 @@
         async function submitOrder() {
             if (cart.length === 0) return;
 
-            // 1. ตรวจสอบสถานะอินเทอร์เน็ตก่อนส่ง
             if (!navigator.onLine) {
                 alert('⚠️ ບໍ່ມີສັນຍານອິນເຕີເນັດ! ກະລຸນາກວດສອບ Wi-Fi ແລ້ວລອງສົ່ງໃໝ່ອີກຄັ້ງ');
                 return;
@@ -528,7 +529,6 @@
             let nowString = now.toLocaleString();
 
             try {
-                // 2. ส่งข้อมูลหลักไปที่ Google Sheets แบบรอผลลัพธ์เพื่อดักจับข้อผิดพลาด
                 let response = await fetch(SCRIPT_URL, {
                     method: 'POST',
                     headers: {
@@ -549,7 +549,6 @@
                     throw new Error('Server response not ok');
                 }
 
-                // 3. ส่งแจ้งเตือน Telegram (ทำงานแบบเบื้องหลัง ไม่บล็อกขั้นตอนหลักถ้าล่ม)
                 let text = `--- 📋 ອໍເດີ້ໃໝ່ ໂຕະ ${tableNumber} ---\n`;
                 grouped.forEach((item, index) => {
                     text += `\n${index + 1}. ${item.name} (x${item.qty}) - ${(item.price * item.qty).toLocaleString()} ₭`;
@@ -564,7 +563,6 @@
                 const telegramUrl = `https://api.callmebot.com/telegram/group.php?apikey=${apiKey}&text=${encodeURIComponent(text)}`;
                 fetch(telegramUrl, { mode: 'no-cors' }).catch(e => console.error("Telegram Error", e));
 
-                // 4. สร้างและดาวน์โหลดสลิป
                 generateAndSaveSlip(currentOrderItems, roundTotal, nowString);
 
                 alert('✅ ສັ່ງອາຫານສຳເລັດ! ລະບົບໄດ້ບັນທຶກອໍເດີ້ແລະສະລິບຮຽບຮ້ອຍແລ້ວ');
@@ -573,9 +571,8 @@
                 closeConfirmCartModal();
 
             } catch (error) {
-                // 5. ดักจับข้อผิดพลาดกรณีส่งไม่ผ่าน
                 console.error("Submission Error:", error);
-                alert('❌ ບໍ່ສາມາດສົ່ງອໍເດີ້ໄດ້ເນື່ອງຈາກເກີດຂໍ້ຜິດພາດ (ເຊີບເວີມີບັນຫາ ຫຼື ເນັດຫຼุด)\nກະລຸນາກົດປຸ່ມ "ຢືນຢັນ" ใหม่อีกครั้ง');
+                alert('❌ ບໍ່ສາມາດສົ່ງອໍເດີ້ໄດ້ເນື່ອງຈາກເກີດຂໍ້ຜິດພາດ (ເຊີບເວີມີບັນຫາ ຫຼື ເນັດຫຼຸດ)\nກະລຸນາກົດປຸ່ມ "ຢືນຢັນ" ใหม่อีกครั้ง');
             } finally {
                 btn.innerText = originalText;
                 btn.disabled = false;
