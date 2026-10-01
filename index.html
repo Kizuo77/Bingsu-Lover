@@ -504,8 +504,15 @@
             link.click();
         }
 
-        function submitOrder() {
+        async function submitOrder() {
             if (cart.length === 0) return;
+
+            // 1. ตรวจสอบสถานะอินเทอร์เน็ตก่อนส่ง
+            if (!navigator.onLine) {
+                alert('⚠️ ບໍ່ມີສັນຍານອິນເຕີເນັດ! ກະລຸນາກວດສອບ Wi-Fi ແລ້ວລອງສົ່ງໃໝ່ອີກຄັ້ງ');
+                return;
+            }
+
             const btn = document.getElementById('checkoutBtn');
             const originalText = btn.innerText;
             btn.innerText = 'ກຳລັງສົ່ງອໍເດີ້...';
@@ -520,47 +527,59 @@
             let timeStr = now.toTimeString().split(' ')[0];
             let nowString = now.toLocaleString();
 
-            fetch(SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    "sheet": "Sheet1",
-                    "Date": dateStr,
-                    "Time": timeStr,
-                    "Table": String(tableNumber),
-                    "Items": JSON.stringify(grouped),
-                    "Total": roundTotal,
-                    "Payment": selectedPayment
-                })
-            }).catch(err => console.log("Apps Script Error:", err));
+            try {
+                // 2. ส่งข้อมูลหลักไปที่ Google Sheets แบบรอผลลัพธ์เพื่อดักจับข้อผิดพลาด
+                let response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8',
+                    },
+                    body: JSON.stringify({
+                        "sheet": "Sheet1",
+                        "Date": dateStr,
+                        "Time": timeStr,
+                        "Table": String(tableNumber),
+                        "Items": JSON.stringify(grouped),
+                        "Total": roundTotal,
+                        "Payment": selectedPayment
+                    })
+                });
 
-            let text = `--- 📋 ອໍເດີ້ໃໝ່ ໂຕະ ${tableNumber} ---\n`;
-            grouped.forEach((item, index) => {
-                text += `\n${index + 1}. ${item.name} (x${item.qty}) - ${(item.price * item.qty).toLocaleString()} ₭`;
-                if (item.toppings && item.toppings.length > 0) {
-                    text += `\n   + ທັອບປິ້ງ: ` + item.toppings.map(t => t.name).join(', ');
+                if (!response.ok && response.type !== 'opaque') {
+                    throw new Error('Server response not ok');
                 }
-            });
-            text += `\n\n💳 ປະເພດຊຳລະ: ${selectedPayment}`;
-            text += `\n💰 ລວມຍອດຮອບນີ້: ${roundTotal.toLocaleString()} ₭`;
 
-            const apiKey = "LTU0NjIxODI3ODA"; 
-            const telegramUrl = `https://api.callmebot.com/telegram/group.php?apikey=${apiKey}&text=${encodeURIComponent(text)}`;
-            fetch(telegramUrl, { mode: 'no-cors' }).catch(e => console.error("Telegram Error", e));
+                // 3. ส่งแจ้งเตือน Telegram (ทำงานแบบเบื้องหลัง ไม่บล็อกขั้นตอนหลักถ้าล่ม)
+                let text = `--- 📋 ອໍເດີ້ໃໝ່ ໂຕະ ${tableNumber} ---\n`;
+                grouped.forEach((item, index) => {
+                    text += `\n${index + 1}. ${item.name} (x${item.qty}) - ${(item.price * item.qty).toLocaleString()} ₭`;
+                    if (item.toppings && item.toppings.length > 0) {
+                        text += `\n   + ທັອບປິ້ງ: ` + item.toppings.map(t => t.name).join(', ');
+                    }
+                });
+                text += `\n\n💳 ປະເພດຊຳລະ: ${selectedPayment}`;
+                text += `\n💰 ລວມຍອດຮອບນີ້: ${roundTotal.toLocaleString()} ₭`;
 
-            generateAndSaveSlip(currentOrderItems, roundTotal, nowString);
+                const apiKey = "LTU0NjIxODI3ODA"; 
+                const telegramUrl = `https://api.callmebot.com/telegram/group.php?apikey=${apiKey}&text=${encodeURIComponent(text)}`;
+                fetch(telegramUrl, { mode: 'no-cors' }).catch(e => console.error("Telegram Error", e));
 
-            setTimeout(() => {
-                alert('ສົ່ງອໍເດີ້ສຳເລັດ ແລະ ບັນທຶກສະລິບລົງເຄື່ອງແລ້ວ!');
+                // 4. สร้างและดาวน์โหลดสลิป
+                generateAndSaveSlip(currentOrderItems, roundTotal, nowString);
+
+                alert('✅ ສັ່ງອາຫານສຳເລັດ! ລະບົບໄດ້ບັນທຶກອໍເດີ້ແລະສະລິບຮຽບຮ້ອຍແລ້ວ');
                 cart = [];
                 updateCartUI();
                 closeConfirmCartModal();
+
+            } catch (error) {
+                // 5. ดักจับข้อผิดพลาดกรณีส่งไม่ผ่าน
+                console.error("Submission Error:", error);
+                alert('❌ ບໍ່ສາມາດສົ່ງອໍເດີ້ໄດ້ເນື່ອງຈາກເກີດຂໍ້ຜິດພາດ (ເຊີບເວີມີບັນຫາ ຫຼື ເນັດຫຼุด)\nກະລຸນາກົດປຸ່ມ "ຢືນຢັນ" ใหม่อีกครั้ง');
+            } finally {
                 btn.innerText = originalText;
                 btn.disabled = false;
-            }, 1000);
+            }
         }
 
         renderMenu();
