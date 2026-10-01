@@ -11,7 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 <body class="bg-gray-100 font-sans p-4 pb-28">
-    <!-- Header โค้งมนสีชมพูสไตล์พรีเมียม (เอาปุ่มขวาออกแล้ว) -->
+    <!-- Header โค้งมนสีชมพูสไตล์พรีเมียม -->
     <header class="bg-gradient-to-r from-pink-600 to-rose-500 text-white p-4.5 rounded-3xl shadow-lg flex items-center mb-5 max-w-md mx-auto">
         <div class="flex items-center space-x-3.5">
             <img src="https://lh3.googleusercontent.com/d/1DUy6y4NfvVQ99p1FNEvByRjY_66tGBkB" alt="ໂລໂກ້" class="w-12 h-12 rounded-full object-cover border-2 border-white/30 shadow-md">
@@ -55,11 +55,16 @@
                 <button onclick="closeConfirmCartModal()" class="text-gray-400 hover:text-gray-600 font-bold text-xl">&times;</button>
             </div>
             
-            <div id="confirm-cart-items" class="space-y-3 overflow-y-auto flex-1 pr-1 max-h-[40vh] text-xs"></div>
+            <div id="confirm-cart-items" class="space-y-3 overflow-y-auto flex-1 pr-1 max-h-[30vh] text-xs"></div>
 
             <div class="mt-3 pt-3 border-t space-y-3 text-xs">
                 <div>
-                    <label class="font-bold text-gray-700 block mb-1.5">💳 ເລືອກປະເພດການຊໍາລະເງິນ:</label>
+                    <label class="font-bold text-gray-700 block mb-1">👤 ຊື່ ຫຼື ເບີໂທລະສັບຜູ້ສັ່ງ <span class="text-red-500">*</span>:</label>
+                    <input type="text" id="customer-name" placeholder="ກະລຸນາປ້ອນຊື່ ຫຼື ເບີໂທ..." class="w-full border border-gray-200 p-2.5 rounded-xl bg-gray-50 text-xs focus:outline-none focus:border-pink-500 font-medium">
+                </div>
+
+                <div>
+                    <label class="font-bold text-gray-700 block mb-1">💳 ເລືອກປະເພດການຊໍາລະເງິນ:</label>
                     <div class="grid grid-cols-2 gap-2">
                         <label class="border-2 rounded-xl p-2.5 flex items-center justify-center space-x-2 cursor-pointer transition border-pink-500 bg-pink-50" id="label-cash">
                             <input type="radio" name="payment-method" value="เงินสด (Cash)" checked onchange="setPaymentMethod('cash')" class="accent-pink-600">
@@ -368,7 +373,7 @@
             return Object.values(map);
         }
 
-        function generateAndSaveSlip(orderItems, grandTotalVal, nowString) {
+        function generateAndSaveSlip(orderItems, grandTotalVal, nowString, customerName) {
             let grouped = getGroupedOrders(orderItems);
             let dynamicItemsHeight = 0;
             grouped.forEach(item => {
@@ -380,7 +385,7 @@
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             canvas.width = 600;
-            canvas.height = 320 + dynamicItemsHeight + 120;
+            canvas.height = 340 + dynamicItemsHeight + 120;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             function drawRoundedRect(x, y, width, height, radius) {
@@ -412,15 +417,15 @@
                 ctx.globalAlpha = 0.06;
                 ctx.drawImage(logoImg, canvas.width / 2 - 150, canvas.height / 2 - 150, 300, 300);
                 ctx.restore();
-                drawSlipBody(canvas, ctx, grouped, grandTotalVal, nowString);
+                drawSlipBody(canvas, ctx, grouped, grandTotalVal, nowString, customerName);
             };
 
             logoImg.onerror = function() {
-                drawSlipBody(canvas, ctx, grouped, grandTotalVal, nowString);
+                drawSlipBody(canvas, ctx, grouped, grandTotalVal, nowString, customerName);
             };
         }
 
-        function drawSlipBody(canvas, ctx, grouped, grandTotalVal, nowString) {
+        function drawSlipBody(canvas, ctx, grouped, grandTotalVal, nowString, customerName) {
             ctx.fillStyle = '#db2777';
             ctx.fillRect(0, 0, canvas.width, 130);
 
@@ -436,20 +441,21 @@
             ctx.font = 'bold 18px sans-serif';
             ctx.textAlign = 'left';
             ctx.fillText('ໂຕະ (Table): ' + tableNumber, 40, 175);
+            ctx.fillText('ຊື່ / ເບີໂທ: ' + customerName, 40, 200);
 
             ctx.font = '14px sans-serif';
             ctx.fillStyle = '#6b7280';
-            ctx.fillText('ວັນທີ: ' + nowString, 40, 200);
-            ctx.fillText('ຊຳລະຜ່ານ: ' + selectedPayment, 40, 225);
+            ctx.fillText('ວັນທີ: ' + nowString, 40, 225);
+            ctx.fillText('ຊຳລະຜ່ານ: ' + selectedPayment, 40, 250);
 
             ctx.strokeStyle = '#e5e7eb';
             ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.moveTo(40, 245);
-            ctx.lineTo(560, 245);
+            ctx.moveTo(40, 265);
+            ctx.lineTo(560, 265);
             ctx.stroke();
 
-            let y = 290;
+            let y = 310;
             grouped.forEach((item, index) => {
                 ctx.fillStyle = '#1f2937';
                 ctx.font = 'bold 17px sans-serif';
@@ -509,6 +515,13 @@
         async function submitOrder() {
             if (cart.length === 0) return;
 
+            const customerName = document.getElementById('customer-name').value.trim();
+            if (!customerName) {
+                alert('⚠️ ⚠️ ກະລຸນາປ້ອນຊື່ ຫຼື ເບີໂທລະສັບກ່ອນกดยืนยันออเดอร์ครับ!');
+                document.getElementById('customer-name').focus();
+                return;
+            }
+
             if (!navigator.onLine) {
                 alert('⚠️ ບໍ່ມີສັນຍານອິນເຕີເນັດ! ກະລຸນາກວດສອບ Wi-Fi ແລ້ວລອງສົ່ງໃໝ່ອີກຄັ້ງ');
                 return;
@@ -541,7 +554,8 @@
                         "Table": String(tableNumber),
                         "Items": JSON.stringify(grouped),
                         "Total": roundTotal,
-                        "Payment": selectedPayment
+                        "Payment": selectedPayment,
+                        "Customer": customerName
                     })
                 });
 
@@ -550,6 +564,7 @@
                 }
 
                 let text = `--- 📋 ອໍເດີ້ໃໝ່ ໂຕະ ${tableNumber} ---\n`;
+                text += `👤 ຊື່/ເບີໂທ: ${customerName}\n`;
                 grouped.forEach((item, index) => {
                     text += `\n${index + 1}. ${item.name} (x${item.qty}) - ${(item.price * item.qty).toLocaleString()} ₭`;
                     if (item.toppings && item.toppings.length > 0) {
@@ -563,10 +578,11 @@
                 const telegramUrl = `https://api.callmebot.com/telegram/group.php?apikey=${apiKey}&text=${encodeURIComponent(text)}`;
                 fetch(telegramUrl, { mode: 'no-cors' }).catch(e => console.error("Telegram Error", e));
 
-                generateAndSaveSlip(currentOrderItems, roundTotal, nowString);
+                generateAndSaveSlip(currentOrderItems, roundTotal, nowString, customerName);
 
-                alert('✅ ສັ່ງອາຫານສຳເລັດ! ລະບົບໄດ້ບັນທຶກອໍເດີ້ແລະສະລິບຮຽບຮ້ອຍແລ້ວ');
+                alert('✅ ສັ່ງອາຫານສຳເລັດ! ລະບົບໄດ້ບັນທຶກອໍເດີ້เข้า Google Sheets และดาวน์โหลดสลิปเรียบร้อยแล้ว');
                 cart = [];
+                document.getElementById('customer-name').value = '';
                 updateCartUI();
                 closeConfirmCartModal();
 
