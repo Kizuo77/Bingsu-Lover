@@ -11,25 +11,16 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
     <style>
-
     @keyframes softBounce {
-
         0%, 100% { transform: translateY(0); }
-
         50% { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(236, 72, 153, 0.2); }
-
     }
-
     .animate-special-card {
-
         animation: softBounce 1.5s infinite ease-in-out;
-
         background: linear-gradient(135deg, #fcfcfc 0%, #ffffff 100%);
-
         border: 2px solid #fb7185 !important;
-
-
-</style>
+    }
+    </style>
 </head>
 <body class="bg-gray-100 font-sans p-4 pb-28">
     <!-- Header โค้งมนสีชมพูสไตล์พรีเมียม -->
@@ -54,7 +45,7 @@
             </div>
             <div class="space-y-4 text-xs">
                 <div>
-                    <label class="font-bold text-gray-700 block mb-2">ເລືອກທັອບປິ້ງເພີ່ມ</label>
+                    <label id="modalOptionLabel" class="font-bold text-gray-700 block mb-2">ເລືອກເພີ່ມເຕີມ</label>
                     <div id="topping-list" class="space-y-2"></div>
                 </div>
             </div>
@@ -110,13 +101,10 @@
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby3X6oG8MuCJytbXxekcg-zDNfQTBf23MMPA5G-rG3oBEUF_ccsOLj-txrS0ZvJP9bpcQ/exec";
 
-        // ==========================================
-        // 🎛️ สวิตช์เปิด-ปิดเอฟเฟกต์เมนูพิเศษ (True = เปิด, False = ปิด)
-        // ==========================================
         const isSpecialEffectEnabled = true; 
 
         const menuData = [
-              {
+            {
                 category: "💥 ໂປຣໂມຊັ້ນພິເສດ 🏷️✨",
                 items: [
                     { id: 901, name: "ເມນູໃໝ່✨ ຊຸດອິ່ມຄຸ້ມ", price: 89000, img: "https://lh3.googleusercontent.com/d/1IaPUwSYGiI62eYUgFK6me-tBjOUQ0lA0", hasOption: false, available: true }
@@ -125,22 +113,22 @@
             {
                 category: "🍧 ເມນູບິງຊູ (ເລືອກທັອບປິ້ງໄດ້)",
                 items: [
-                    { id: 16, name: "ເມນູໃໝ່✨ ບິງຊູໂອລີໂອ້🍫✨", price: 89000, img: "https://lh3.googleusercontent.com/d/1LX4LGjuEgYhm4gjbC7_KerKPQEm8pw2N", hasOption: true, available: true },
-                    { id: 14, name: "ເມນູໃໝ່✨ ບິງຊູຝຸດຕີ້ປ໋າຕີ້🥝🫐🍉", price: 130000, img: "https://lh3.googleusercontent.com/d/1SluXsuIvqW9B_Z15cxHPhaE7bhuBGI8w", hasOption: true, available: true },
-                    { id: 15, name: "ບິງຊູໂກໂກ້ຄັ້ນຊີ້🧉🥓", price: 89000, img: "https://lh3.googleusercontent.com/d/1vMNQ8brjff_Nh2QnzC9r3F1shRJw8M-f", hasOption: true, available: true },
-                    { id: 11, name: "ບິງຊູແຄນຕາລຸບ", price: 119000, img: "https://lh3.googleusercontent.com/d/1cwsGq7hnxNuPAWBLl7XFowVrt-PAw7hp", hasOption: true, available: true },
-                    { id: 10, name: "ບິງຊູເມລ່ອນ", price: 119000, img: "https://lh3.googleusercontent.com/d/1-2YG1JZ4d87l3jMVs_hmMGLl5OqXbapA", hasOption: true, available: true },
-                    { id: 12, name: "ບິງບຣູເບີຣີ້ 🫐", price: 89000, img: "https://lh3.googleusercontent.com/d/1e63vcVMpduxaNXl5AhcDNDjvE8DtJ_f8", hasOption: true, available: true },
-                    { id: 13, name: "ບິງຊູມິ້ນຊັອກ🍫❄️🍃", price: 89000, img: "https://lh3.googleusercontent.com/d/1Rxi5waHBYygVP-s2660qy_jooAQ14w3m", hasOption: true, available: true },
-                    { id: 1, name: "ບິງຊູຊັອກໂກ້ບຣາວນີ້", price: 89000, img: "https://lh3.googleusercontent.com/d/1_8Zyo4aM9PHvznOlm3EyKcIAr4oZeaMJ", hasOption: true, available: true },
-                    { id: 2, name: "ບິງຊູໝາກມ່ວງ", price: 89000, img: "https://lh3.googleusercontent.com/d/1O-gpnZxkyIivrvqYdC2s1kFHo2HIG-Qk", hasOption: true, available: true },
-                    { id: 3, name: "ບິງຊູຊາໄທ", price: 89000, img: "https://lh3.googleusercontent.com/d/1_Yq53PXcHCdv3CboFQYNODLZYk56QZsh", hasOption: true, available: true },
-                    { id: 4, name: "ບິງຊູຂຽວຊັອກຊິບ", price: 89000, img: "https://lh3.googleusercontent.com/d/1Xtw0CzQPcptSKduOOiIh6U5HjQLhMZ-_", hasOption: true, available: true },
-                    { id: 5, name: "ບິງຊູຊັອກໂກ້ບານານາ", price: 89000, img: "https://lh3.googleusercontent.com/d/1pWLPKt43sW65l_yAWyyRHdSTqsa-44CY", hasOption: true, available: true },
-                    { id: 6, name: "ບິງຊູຊາຂຽວ ບຣາວນີ້", price: 89000, img: "https://lh3.googleusercontent.com/d/1B2HS7EbmyaINLoL5UNcCJ9v7N_u6crIY", hasOption: true, available: true },
-                    { id: 7, name: "ບິງຊູບານານ່າພູເຂົາໄຟ", price: 89000, img: "https://lh3.googleusercontent.com/d/1ah81YOGhiyt5go50OLl2Ll9-Drba2DYP", hasOption: true, available: true },
-                    { id: 8, name: "ບິງຊູຄອນເຟັກໂກໂກ້ຄັ້ນ", price: 89000, img: "https://lh3.googleusercontent.com/d/1Yxss5ZOBmUzkcHjHPzLnekmfmFyWqCch", hasOption: true, available: true },
-                    { id: 9, name: "ບິງຊູໝາກໂມ", price: 119000, img: "https://lh3.googleusercontent.com/d/14-UUzC9FYDcxA7zIcpvLBSn0qRs9unMj", hasOption: true, available: false }
+                    { id: 16, name: "ເມນູໃໝ່✨ ບິງຊູໂອລີໂອ້🍫✨", price: 89000, img: "https://lh3.googleusercontent.com/d/1LX4LGjuEgYhm4gjbC7_KerKPQEm8pw2N", hasOption: true, optionType: "bingsu", available: true },
+                    { id: 14, name: "ເມນູໃໝ່✨ ບິງຊູຝຸດຕີ້ປ໋າຕີ້🥝🫐🍉", price: 130000, img: "https://lh3.googleusercontent.com/d/1SluXsuIvqW9B_Z15cxHPhaE7bhuBGI8w", hasOption: true, optionType: "bingsu", available: true },
+                    { id: 15, name: "ບິງຊູໂກໂກ້ຄັ້ນຊີ້🧉🥓", price: 89000, img: "https://lh3.googleusercontent.com/d/1vMNQ8brjff_Nh2QnzC9r3F1shRJw8M-f", hasOption: true, optionType: "bingsu", available: true },
+                    { id: 11, name: "ບິງຊູແຄນຕາລຸບ", price: 119000, img: "https://lh3.googleusercontent.com/d/1cwsGq7hnxNuPAWBLl7XFowVrt-PAw7hp", hasOption: true, optionType: "bingsu", available: true },
+                    { id: 10, name: "ບິງຊູເມລ່ອນ", price: 119000, img: "https://lh3.googleusercontent.com/d/1-2YG1JZ4d87l3jMVs_hmMGLl5OqXbapA", hasOption: true, optionType: "bingsu", available: true },
+                    { id: 12, name: "ບິງບຣູເບີຣີ້ 🫐", price: 89000, img: "https://lh3.googleusercontent.com/d/1e63vcVMpduxaNXl5AhcDNDjvE8DtJ_f8", hasOption: true, optionType: "bingsu", available: true },
+                    { id: 13, name: "ບິງຊູມິ້ນຊັອກ🍫❄️🍃", price: 89000, img: "https://lh3.googleusercontent.com/d/1Rxi5waHBYygVP-s2660qy_jooAQ14w3m", hasOption: true, optionType: "bingsu", available: true },
+                    { id: 1, name: "ບິງຊູຊັອກໂກ້ບຣາວນີ້", price: 89000, img: "https://lh3.googleusercontent.com/d/1_8Zyo4aM9PHvznOlm3EyKcIAr4oZeaMJ", hasOption: true, optionType: "bingsu", available: true },
+                    { id: 2, name: "ບິງຊູໝາກມ່ວງ", price: 89000, img: "https://lh3.googleusercontent.com/d/1O-gpnZxkyIivrvqYdC2s1kFHo2HIG-Qk", hasOption: true, optionType: "bingsu", available: true },
+                    { id: 3, name: "ບິງຊູຊາໄທ", price: 89000, img: "https://lh3.googleusercontent.com/d/1_Yq53PXcHCdv3CboFQYNODLZYk56QZsh", hasOption: true, optionType: "bingsu", available: true },
+                    { id: 4, name: "ບິງຊູຂຽວຊັອກຊິບ", price: 89000, img: "https://lh3.googleusercontent.com/d/1Xtw0CzQPcptSKduOOiIh6U5HjQLhMZ-_", hasOption: true, optionType: "bingsu", available: true },
+                    { id: 5, name: "ບິງຊູຊັອກໂກ້ບານານາ", price: 89000, img: "https://lh3.googleusercontent.com/d/1pWLPKt43sW65l_yAWyyRHdSTqsa-44CY", hasOption: true, optionType: "bingsu", available: true },
+                    { id: 6, name: "ບິງຊູຊາຂຽວ ບຣາວນີ້", price: 89000, img: "https://lh3.googleusercontent.com/d/1B2HS7EbmyaINLoL5UNcCJ9v7N_u6crIY", hasOption: true, optionType: "bingsu", available: true },
+                    { id: 7, name: "ບິງຊູບານານ່າພູເຂົາໄຟ", price: 89000, img: "https://lh3.googleusercontent.com/d/1ah81YOGhiyt5go50OLl2Ll9-Drba2DYP", hasOption: true, optionType: "bingsu", available: true },
+                    { id: 8, name: "ບິງຊູຄອນເຟັກໂກໂກ້ຄັ້ນ", price: 89000, img: "https://lh3.googleusercontent.com/d/1Yxss5ZOBmUzkcHjHPzLnekmfmFyWqCch", hasOption: true, optionType: "bingsu", available: true },
+                    { id: 9, name: "ບິງຊູໝາກໂມ", price: 119000, img: "https://lh3.googleusercontent.com/d/14-UUzC9FYDcxA7zIcpvLBSn0qRs9unMj", hasOption: true, optionType: "bingsu", available: false }
                 ]
             },
             {
@@ -155,11 +143,23 @@
                 ]
             },
             {
+                category: "🍚 ເມນູເຂົ້າ / ອາຫານຈານດ່ວນ",
+                items: [
+                    // เพิ่ม optionType: "rice" เพื่อบอกให้ใช้ตัวเลือกของหมวดข้าว
+                    { id: 401, name: "ເຂົ້າກະເພົາທະເລ", price: 55000, img: "https://www.lemon8-app.com/seo/image?item_id=7603863334781288978&index=0&sign=ce2d0fdc8e45ba67d693433934c699c1", hasOption: true, optionType: "rice", available: true },
+                    { id: 402, name: "ເຂົ້າກະເພົາງົວ", price: 50000, img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjQFBg4Uw1SLborb59rORIvmPvXjW9n6MUZ2joXuz7pmTmsq38WZJiNUqF&s=10", hasOption: true, optionType: "rice", available: true },
+                    { id: 403, name: "ເຂົ້າກະເພົາກຸ້ງ", price: 50000, img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToln2zk_eTmmSxLujRh20p0M4nBSeNkSmxMcnllTFVYrjJ_o00c3N3Wc4&s=10", hasOption: true, optionType: "rice", available: true },
+                    { id: 404, name: "ເຂົ້າກະເພົາໝູໝັກ", price: 40000, img: "https://i.pinimg.com/736x/34/37/03/343703ca0fe41524c02caaa8ade5115c.jpg", hasOption: true, optionType: "rice", available: true },
+                    { id: 405, name: "ເຂົ້າກະເພົາໝູສັບ", price: 40000, img: "https://www.tecnoplusthai.com/wp-content/uploads/2025/08/9.3.webp", hasOption: true, optionType: "rice", available: true }
+                ]
+            },
+            {
                 category: "🍟 ເມນູຂອງກິນຫຼິ້ນ",
                 items: [
                     { id: 101, name: "ເຟນຟາຍ", price: 30000, img: "https://lh3.googleusercontent.com/d/1I-n3U1-g0HgprEACsLX1n1QyaYNH7Md8", hasOption: false, available: true },
                     { id: 102, name: "ຂາໄກ່ທອດ", price: 30000, img: "https://lh3.googleusercontent.com/d/1NCdiE8AyJC6CDZeS65SLcK-Q-4up4Y8r", hasOption: false, available: true },
                     { id: 104, name: "ສາຫຼ່າຍ", price: 17000, img: "https://lh3.googleusercontent.com/d/1XCFP1DiVYnFyk1qsAqitfvZjEimjDSl-", hasOption: false, available: true },
+                    { id: 105, name: "ຊິສບອນ", price: 40000, img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOuSTQO7_VYqnHKDclbns36OlYHM8_5b4aaknGCKqazIh8rgwczUEqS3k&s=10", hasOption: false, available: true },
                     { id: 103, name: "ມາມາເກົາຫຼີ", price: 40000, img: "https://lh3.googleusercontent.com/d/1SzqoQsjaKKYNiKNxFb5aa6ApNzDrpLxs", hasOption: false, available: true }
                 ]
             },
@@ -176,6 +176,13 @@
             }
         ];
 
+        // 🍳 ท็อปปิ้งสำหรับหมวดข้าว (เพิ่มไข่ดาว, พิเศษเนื้อสัตว์ ฯลฯ)
+        const riceOptionsData = [
+            { name: "ເພີ່ມໄຂ່ດາວ", price: 10000 },
+            { name: "ເພີ່ມໄຂ່ຂົ້ນ", price: 15000 }
+        ];
+
+        // 🍧 ท็อปปิ้งสำหรับหมวดบิงຊູ
         const toppingsData = [
             { name: "ຊອດຊັອກໂກແລັດ", price: 5000 },
             { name: "ນົມຂົ້ນຫວານ", price: 5000 },
@@ -207,7 +214,6 @@
                     let qty = itemQuantities[item.id];
                     let isAvailable = item.available !== false;
 
-                    // เช็คเงื่อนไขเปิด-ปิดเอฟเฟกต์
                     let isSpecial = isSpecialEffectEnabled && (item.name.includes("✨") || item.name.includes("ເມນູໃໝ່"));
                     let cardStyleClass = isSpecial 
                         ? "animate-special-card p-4 rounded-2xl shadow-md flex items-center space-x-3 relative overflow-hidden" 
@@ -270,16 +276,31 @@
         function openModal(item, qty) {
             currentItem = { ...item, qty: qty };
             document.getElementById('modalTitle').innerText = `${item.name} (x${qty})`;
+            
             const toppingContainer = document.getElementById('topping-list');
+            const modalOptionLabel = document.getElementById('modalOptionLabel');
             toppingContainer.innerHTML = '';
-            toppingsData.forEach((top) => {
+
+            // ตรวจสอบว่าเป็นหมวดข้าวหรือบิงຊູ เพื่อแสดงรายการเลือกเสริมที่ถูกต้อง
+            let optionsList = [];
+            if (item.optionType === "rice") {
+                modalOptionLabel.innerText = "ເລືອກເພີ່ມເຕີມ (ຳສລັບເມນູເຂົ້າ)";
+                optionsList = riceOptionsData;
+            } else {
+                modalOptionLabel.innerText = "ເລືອກທັອບປິ້ງເພີ່ມ (ສຳລັບບິງຊູ)";
+                optionsList = toppingsData;
+            }
+
+            optionsList.forEach((opt) => {
+                let priceText = opt.price > 0 ? ` (+${opt.price.toLocaleString()} ₭)` : '';
                 toppingContainer.innerHTML += `
                     <label class="flex items-center justify-between border border-pink-100 p-2.5 rounded-xl cursor-pointer hover:bg-pink-50/50 transition">
-                        <span class="font-medium text-gray-700">${top.name} (+${top.price.toLocaleString()} ₭)</span>
-                        <input type="checkbox" value="${top.name}" data-price="${top.price}" class="topping-checkbox accent-pink-600 w-4 h-4" onchange="updateModalPrice()">
+                        <span class="font-medium text-gray-700">${opt.name}${priceText}</span>
+                        <input type="checkbox" value="${opt.name}" data-price="${opt.price}" class="topping-checkbox accent-pink-600 w-4 h-4" onchange="updateModalPrice()">
                     </label>
                 `;
             });
+
             updateModalPrice();
             document.getElementById('optionModal').classList.remove('hidden');
         }
@@ -533,7 +554,7 @@
 
             const customerName = document.getElementById('customer-name').value.trim();
             if (!customerName) {
-                alert('⚠️ ⚠️ ກະລຸນາປ້ອນຊື່ ຫຼື ເບີໂທລະສັບກ່ອນกดยืนยันออเดอร์ครับ!');
+                alert('⚠️ ⚠️ ກະລຸນາປ້ອນຊື່ ຫຼື ເບີໂທລະສັບກ່ອນກดยืนยันออเดอร์ครับ!');
                 document.getElementById('customer-name').focus();
                 return;
             }
@@ -584,7 +605,7 @@
                 grouped.forEach((item, index) => {
                     text += `\n${index + 1}. ${item.name} (x${item.qty}) - ${(item.price * item.qty).toLocaleString()} ₭`;
                     if (item.toppings && item.toppings.length > 0) {
-                        text += `\n   + ທັອບປິ້ງ: ` + item.toppings.map(t => t.name).join(', ');
+                        text += `\n   + เพิ่มเติม: ` + item.toppings.map(t => t.name).join(', ');
                     }
                 });
                 text += `\n💰 ລວມຍອດຮອບນີ້: ${roundTotal.toLocaleString()} ₭`;
@@ -595,7 +616,7 @@
 
                 generateAndSaveSlip(currentOrderItems, roundTotal, nowString, customerName);
 
-                alert('✅ ສັ່ງອາຫານສຳເລັດ! ລະບົບໄດ້ບັນທຶກອໍເດີ້เข้า Google Sheets และดาวน์โหลดสลิปเรียบร้อยแล้ว');
+                alert('✅ ສັ່ງອາຫານສຳເລັດ!');
                 cart = [];
                 document.getElementById('customer-name').value = '';
                 updateCartUI();
@@ -603,7 +624,7 @@
 
             } catch (error) {
                 console.error("Submission Error:", error);
-                alert('❌ ບໍ່ສາມາດສົ່ງອໍເດີ້ໄດ້ເນື່ອງຈາກເກີດຂໍ້ຜິດພາດ (ເຊີບເວີມີບັນຫາ ຫຼື ເນັດຫຼຸດ)\nກະລຸນາກົດປຸ່ມ "ຢືນຢັນ" ใหม່ອີກຄັ້ງ');
+                alert('❌ ບໍ່ສາມາດສົ່ງອໍເດີ້ໄດ້ເນື່ອງຈາກເກີດຂໍ້ຜິດພາດ (ເຊີບເວີມີບັນຫາ ຫຼື ເນັດຫຼຸດ)\nກະລຸນາກົດປຸ່ມ "ຢືນຢັນ" ใหມ່ອີກຄັ້ງ');
             } finally {
                 btn.innerText = originalText;
                 btn.disabled = false;
