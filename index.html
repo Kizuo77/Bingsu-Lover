@@ -554,7 +554,7 @@
 
             const customerName = document.getElementById('customer-name').value.trim();
             if (!customerName) {
-                alert('⚠️ ⚠️ ກະລຸນາປ້ອນຊື່ ຫຼື ເບີໂທລະສັບກ່ອນກดยืนยันออเดอร์ครับ!');
+                alert('⚠️ ⚠️ ກະລຸນາປ້ອນຊື່ ຫຼື ເບີໂທລະສັບ!');
                 document.getElementById('customer-name').focus();
                 return;
             }
@@ -616,7 +616,7 @@
 
                 generateAndSaveSlip(currentOrderItems, roundTotal, nowString, customerName);
 
-                alert('✅ ສັ່ງອາຫານສຳເລັດ! ລະບົບໄດ້ບັນທຶກອໍເດີ້เข้า Google Sheets และดาวน์โหลดสลิปเรียบร้อยแล้ว');
+                alert('✅ ສັ່ງອາຫານສຳເລັດ!');
                 cart = [];
                 document.getElementById('customer-name').value = '';
                 updateCartUI();
